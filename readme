@@ -1,0 +1,6 @@
+Linux:
+make ->  程序重新编译
+./main [filename] [m] [r]
+[filename] -> 数据路径
+[m]        -> 模式：0-贪心 1-分布式 2-概率贪心
+[r]        -> 'r'-将truss值写入"output.txt"文件   
