@@ -1,3 +1,3 @@
 g++ main.cpp Graph.cpp -o main
-main krogan.txt 2 r
+main Email-Enron.txt 0 r
 pause

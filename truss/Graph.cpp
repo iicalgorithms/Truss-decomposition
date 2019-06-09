@@ -240,6 +240,7 @@ void Graph::distribute(){
         int changeNodeNum = 0;
         for(int k=0;k<nodeNum;k++){
             NeiNode *nei = nodeList[k].firstNei;
+            int oldChangeEdgeNum = changeEdgeNum;
           //  cout<<"Node:"<<k<<endl;
             while(nei){
                 if(nei->valid){
@@ -283,7 +284,7 @@ void Graph::distribute(){
                 }
                 nei = nei->next;
             }
-            if(changeEdgeNum>0)changeNodeNum++;
+            if(changeEdgeNum-oldChangeEdgeNum>0)changeNodeNum++;
         }
         //cout<<"第"<<++cnt_iter<<"轮： 更新点数-"<<changeNodeNum<<"   更新边数-"<<changeEdgeNum<<endl;
         cout<<"Step "<<setw(4)<<++cnt_iter<<":  Changed Point Num = "<<setw(4)<<changeNodeNum<<"  Changed Edge Num:"<<setw(4)<<changeEdgeNum<<endl;
@@ -345,6 +346,7 @@ void Graph::initPrSup(){
         while(nei){
             if(nei->valid){
                 nei->PrSup = computePrSup(k,nei->id,nei->Pr);
+                nei->tuss = nei->PrSup + 2;
                 if(k<nei->id){
                     edge e(k,nei->id,nei->PrSup);
                     edgeSet.insert(e);
@@ -493,4 +495,67 @@ void Graph::outputSet(){
         cout<<(*iter).st<<" "<<(*iter).ed<<endl;
         iter++;
     }
+}
+
+void Graph::PrDistribute(){
+    int maxIter = 99999999;
+    int cnt_iter = 0;
+    while(maxIter--){
+        int changeEdgeNum = 0;
+        int changeNodeNum = 0;
+        for(int k=0;k<nodeNum;k++){
+            NeiNode *nei = nodeList[k].firstNei;
+          //  cout<<"Node:"<<k<<endl;
+            int oldChangeEdgeNum = changeEdgeNum;
+            while(nei){
+                if(nei->valid){
+                    vector<int> newTuss;
+                    int maxTuss = -1;
+                    NeiNode *i = nodeList[k].firstNei;
+                    while (i)
+                    {
+                        if(i->valid&&i->id!=nei->id){
+                            NeiNode *j = nodeList[nei->id].firstNei;
+                            while (j)
+                            {
+                                if(j->valid&&j->id!=k){
+                                    if(j->id == i->id){ //形成了一个三角形
+                                        newTuss.push_back(min(i->tuss,j->tuss));//放入三角形临边较小的truss
+                                        maxTuss = max(maxTuss,min(i->tuss,j->tuss));//记录数组中最大的maxTruss
+                                    }
+                                }
+                                j = j->next;
+                            }
+                            
+                        }
+                        i = i->next;
+                    }
+                   // cout<<"nei(k-2 >=k):"<<nei->id<<endl;
+                    while(maxTuss>1){
+                        int cnt = 0;
+                        for(int q = 0;q<newTuss.size();q++){
+                     //       cout<<newTuss[q]<<" ";
+                            if(newTuss[q]>=maxTuss)
+                                cnt++;
+                        }
+                        if(cnt>=maxTuss-2) break;
+                        maxTuss --;
+                    }
+                 //   cout<<endl;
+                    if(maxTuss>1&&maxTuss<nei->tuss){
+                        nei->tuss = maxTuss;
+                        changeEdgeNum++;
+                    }
+                }
+                nei = nei->next;
+            }
+            if(changeEdgeNum-oldChangeEdgeNum>0)changeNodeNum++;
+        }
+        //cout<<"第"<<++cnt_iter<<"轮： 更新点数-"<<changeNodeNum<<"   更新边数-"<<changeEdgeNum<<endl;
+        cout<<"Step "<<setw(4)<<++cnt_iter<<":  Changed Point Num = "<<setw(4)<<changeNodeNum<<"  Changed Edge Num:"<<setw(4)<<changeEdgeNum<<endl;
+        if(changeEdgeNum == 0){
+            break;
+        }
+    }
+    
 }

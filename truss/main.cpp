@@ -11,7 +11,7 @@ int main(int argc,char * argv[]){
     ifstream in(argv[1]);
     if(!in.is_open()) cout<<"fail to open file!\n"<<endl;
     string temp;
-    if(argv[2][0] == '2'){
+    if(argv[2][0] == '2'|| argv[2][0] == '3'){
         getline(in,temp);
         istringstream strs(temp);
         int node_num;
@@ -31,7 +31,7 @@ int main(int argc,char * argv[]){
                 G.buildGraph(edge_numm,node_num);
             }else continue;
         }else{
-            if(argv[2][0] == '2'){
+            if(argv[2][0] == '2'|| argv[2][0] == '3'){
                 int st,ed;
                 double pr;
                 str>>st>>ed>>pr;
@@ -55,6 +55,9 @@ int main(int argc,char * argv[]){
     }else if(argv[2][0] == '2'){
         G.initPrSup();
         G.PrGreed();
+    }else if(argv[2][0] == '3'){
+        G.initPrSup();
+        G.PrDistribute();
     }else{
         cout<<"Wrong modle."<<endl;
     }

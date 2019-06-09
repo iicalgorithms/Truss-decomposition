@@ -68,6 +68,7 @@ class Graph{
         void writeFile(char *filename);
         void initPrSup();
         void PrGreed();
+        void PrDistribute();
     private:
         int edgeNum;
         int nodeNum;
