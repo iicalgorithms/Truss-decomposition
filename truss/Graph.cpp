@@ -56,6 +56,45 @@ void Graph::addEdge(int stId,int edId){
     nodeList[findEd].degree ++;
 }
 
+void Graph::addEdge(int stId,int edId,double pr){
+    edgeNum ++;
+    if(stId == edId){
+        return;
+    }
+    int findSt = find(stId),findEd = find(edId);
+    if(findSt<0){
+        findSt = cnt;
+        nodeList[cnt].id = stId;
+        findId[stId] = cnt++;
+    }
+    if(findEd<0){
+        findEd = cnt;
+        nodeList[cnt].id = edId;
+        findId[edId] = cnt++;
+    }
+    NeiNode *p = nodeList[findSt].firstNei;
+    while(p){
+        if(findEd == p->id && p->valid) return;
+        p = p->next;
+    }
+
+    NeiNode *e = new NeiNode;
+    e->id = findEd;
+    e->next = nodeList[findSt].firstNei;
+    e->sup = 0;
+    e->Pr = pr;
+    nodeList[findSt].firstNei = e;
+    nodeList[findSt].degree ++;
+
+    e = new NeiNode;
+    e->id = findSt;
+    e->next = nodeList[findEd].firstNei;
+    e->sup = 0;
+    e->Pr = pr;
+    nodeList[findEd].firstNei = e;
+    nodeList[findEd].degree ++;
+}
+
 void Graph::initSup(){
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
@@ -85,8 +124,7 @@ void Graph::initSup(){
     
 }
 
-void Graph::setTuss(int stId,int edId,int k)
-{
+void Graph::setTuss(int stId,int edId,int k){
     NeiNode *p = nodeList[stId].firstNei;
     while (p)
     {
@@ -292,19 +330,21 @@ void Graph::writeFile(char * filename){
         NeiNode  *nei = nodeList[i].firstNei;
         while (nei)
         {
-            outFile<<nodeList[i].id<<"\t"<<nodeList[nei->id].id<<"\t"<<nei->tuss<<endl;
+            outFile<<setw(12)<<left<<nodeList[i].id<<"\t"<<setw(12)<<left<<nodeList[nei->id].id<<"\t"<<setw(12)<<left<<nei->tuss<<endl;
             nei = nei->next;
         }
     }
 }
 
+
+//初始化Pr SuP  每条边的sup值用dp计算
 void Graph::initPrSup(){
+   
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
         while(nei){
             if(nei->valid){
-                nei->PrSup = computePrSup(k,nei->id);
-                nei->PrSup = nei->Pr*nei->PrSup;
+                nei->PrSup = computePrSup(k,nei->id,nei->Pr);
                 if(k<nei->id){
                     edge e(k,nei->id,nei->PrSup);
                     edgeSet.insert(e);
@@ -317,18 +357,22 @@ void Graph::initPrSup(){
     }
 }
 
-double Graph::computePrSup(int st,int ed){
-        double PrSup = 0;
+//dp及计算sup dp[i][j] = dp[i-1][j-1]p(st,j)p(ed,j) +  (1-p(st,j)p(ed,j))dp[i-1][j-1]
+//前i个三角形里面有j个是存在的
+double Graph::computePrSup(int st,int ed,double p){
         NeiNode *i = nodeList[st].firstNei;
+       
        // cout<<"<"<<st<<","<<ed<<">:";
+       int ek = 0;
+       vector<double> pr;
         while(i){
             if(i->valid && i->id != ed){
                 NeiNode *j = nodeList[ed].firstNei;
                 while(j){
                     if(j->valid && j->id!= st){
                         if(j->id == i->id){
-                            PrSup += i->Pr*j->Pr;
-                          //  cout<<i->Pr<<"*"<<j->Pr<<" + ";
+                            pr.push_back(i->Pr*j->Pr);
+                            ek ++;
                         }
                     }
                     j = j->next;
@@ -337,7 +381,31 @@ double Graph::computePrSup(int st,int ed){
             i = i->next;
         }
        // cout<<" = "<<PrSup<<endl;
-        return PrSup;
+        double e[ek+1];
+        double f[ek+1][ek+1]; 
+        f[0][0] = 1;
+        // for(int k =1;k<=ek+1;k++) f[0][k] = 0;
+        for(int l = 0;l<=ek;l++){
+            for(int k = l+1;k<=ek;k++){
+                f[k][l] = 0;
+            }
+        }
+        for(int l=1;l<=ek;l++){
+            f[0][l] = (1-pr[l-1])*f[0][l-1];
+        }
+        for(int k = 1;k<=ek;k++){
+            for(int l=1;l<=ek;l++){
+                f[k][l] = pr[l-1]*f[k-1][l-1] + (1-pr[l-1])*f[k][l-1]; 
+            }
+        }
+        e[0] = 1;
+        for(int t=1;t<=ek;t++){
+            e[t] = e[t-1]-f[t][ek];//\sum pr(sup>=t) sup大于等于t的所有情况的概率 
+            //cout<<"t:"<<t<<" e[t]:"<<e[t]<<" e[t-1]:"<<e[t-1]<<" p:"<<p<<" e[t]*p:"<<e[t]*p<<" f[t][ek]:"<<f[t][ek]<<" gamma:"<<gamma<<endl;
+            if(e[t]*p < gamma) return t-1;
+        }
+
+        return ek;
 }
 
 void Graph::PrGreed(){
@@ -375,16 +443,16 @@ void Graph::PrRemEdge(int stId,int edId){
                     if(j->id == i->id){
                         edge temp1(min(i->id,st),max(i->id,st),i->PrSup);
                         edgeSet.erase(temp1);
-                        i->PrSup = computePrSup(st,i->id);
+                        i->PrSup = computePrSup(st,i->id,i->Pr);
                         edge temp2(min(i->id,st),max(i->id,st),i->PrSup);
                         edgeSet.insert(temp2);
-                      //  cout<<"sup of "<<nodeList[st].id<<" "<<nodeList[i->id].id<<" down"<<endl;
                         
                         edge temp3(min(j->id,ed),max(j->id,ed),j->PrSup);
                         edgeSet.erase(temp3);
-                        j->PrSup = computePrSup(ed,j->id);
+                        j->PrSup = computePrSup(ed,j->id,j->Pr);
                         edge temp4(min(j->id,ed),max(j->id,ed),j->PrSup);
                         edgeSet.insert(temp4);
+                        //cout<<"sup of "<<nodeList[st].id<<" "<<nodeList[i->id].id<<" down to (i,j):"<<i->PrSup<<" "<<j->PrSup<<endl;
                         break;
                     }
                 }

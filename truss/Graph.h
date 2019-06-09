@@ -4,6 +4,17 @@
 #include <set>
 using namespace std;
 
+struct triNode
+{
+    int st,mid,ed;
+    double PrSt,PrEd;
+    triNode(int s,int m,int e,double ps,double pe){
+        st = s;mid = m;ed = e;
+        PrSt = ps; PrEd = pe;
+    }
+};
+
+
 struct NeiNode{
     int id;
     NeiNode * next;
@@ -13,6 +24,7 @@ struct NeiNode{
     double PrSup = 0;
     int tuss = 0;
     double Pr = 0.1;
+    vector<triNode> tris;
     NeiNode(){Pr = 0.5;}
 };
 
@@ -48,6 +60,7 @@ class Graph{
         int getNodeNum(){return nodeNum;}
         void initSup();
         void addEdge(int stId,int edId);
+        void addEdge(int stId,int edId,double pr);
         void output();
         void egdeBinSort();
         void greed();
@@ -58,8 +71,10 @@ class Graph{
     private:
         int edgeNum;
         int nodeNum;
+        double gamma = 0.1;
         GraphNode *nodeList;
         map<int,int> findId;
+        //map<pair<int,int>,edge> findInfo; 
         set<edge,cmp> edgeSet;
         int find(int id);
         int cnt = 0;
@@ -67,7 +82,7 @@ class Graph{
         void setTuss(int stId,int edId,int k);
         void remEdge(int stId,int edId);
         void PrRemEdge(int stId,int edId);
-        double computePrSup(int st,int ed);
+        double computePrSup(int st,int ed,double p);
         void deleteEdge(int st,int ed);
         void outputSet();
 };

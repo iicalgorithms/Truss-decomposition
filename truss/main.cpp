@@ -11,6 +11,14 @@ int main(int argc,char * argv[]){
     ifstream in(argv[1]);
     if(!in.is_open()) cout<<"fail to open file!\n"<<endl;
     string temp;
+    if(argv[2][0] == '2'){
+        getline(in,temp);
+        istringstream strs(temp);
+        int node_num;
+        int node;
+        strs>>node_num>>node;
+        G.buildGraph(0,node_num);
+    }
     while(getline(in,temp)){
         istringstream str(temp);
         if(temp[0] == '#'){
@@ -23,9 +31,17 @@ int main(int argc,char * argv[]){
                 G.buildGraph(edge_numm,node_num);
             }else continue;
         }else{
-            int st,ed;
-            str>>st>>ed;
-            G.addEdge(st,ed);
+            if(argv[2][0] == '2'){
+                int st,ed;
+                double pr;
+                str>>st>>ed>>pr;
+                G.addEdge(st,ed,pr);
+                //cout<<st<<" "<<ed<<" "<<pr<<endl;
+            }else{
+                int st,ed;
+                str>>st>>ed;
+                G.addEdge(st,ed);
+            }
         }
     }
     if(!(int)(argv[2][0]-'0')){
