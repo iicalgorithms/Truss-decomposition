@@ -86,7 +86,7 @@ int main(int argc,char * argv[]){
         istringstream str(temp);
         if(temp[0] != '#'){
 			int con = 0;
-			if( !v.empty()&&v[pNum] == rNum && pNum<changeNum && addOrSub>=0){	
+			if(addOrSub==1&& !v.empty()&&v[pNum] == rNum && pNum<changeNum && addOrSub>=0){	
 				pNum++;
 				con = 1;
 			}		
@@ -101,7 +101,7 @@ int main(int argc,char * argv[]){
 					G.addEdge(st,ed);
 				}
             }
-			if(con){
+			if(con||addOrSub==2){
 				stId.push_back(min(st,ed));
 				edId.push_back(max(st,ed));				
 			}

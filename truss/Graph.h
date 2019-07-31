@@ -111,6 +111,7 @@ class Graph{
 		set<int > changeNodes;//涉及到的点
 		map<pair<int,int>,int> visit;//动态插入时边改变的数
 		int cntTotalChangedEdge = 0;
+		int addOrSub;
 		
         void setTuss(int stId,int edId,int k);
         void remEdge(int stId,int edId);

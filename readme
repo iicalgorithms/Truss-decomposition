@@ -1,6 +1,9 @@
 Linux:
 make ->  程序重新编译
 ./main [filename] [m] [r]
+[filename]     -> 数据路径
+[m]            -> 求解模式：0-贪心 1-分布式 2-概率贪心
+[graphtype]    -> 图类型：0-static graph  1-temporal graph
 [a]			   -> 1-插入 2-删除
 [i]            -> 插入/删除 数量级
 [r]            -> 'r'-将truss值写入"output.txt"文件  
