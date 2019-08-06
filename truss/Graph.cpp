@@ -1,6 +1,8 @@
 #include "Graph.h"
 #include <fstream>
 #include <iomanip>
+#include <string.h>
+#include <stdlib.h>
 
 Graph::Graph(){}
 
@@ -189,6 +191,7 @@ int Graph::getTuss(int stId,int edId){
         }
         p = p->next;
     }
+    return res;
 }
 
 
@@ -212,6 +215,7 @@ int Graph::getSup(int stId,int edId){
         }
         p = p->next;
     }
+    return res;
 }
 
 void Graph::remEdge(int stId,int edId){
@@ -299,6 +303,7 @@ void Graph::greed(){
         //cout<<nodeList[stId].id<<" "<<nodeList[edId].id<<endl;
         setTuss(stId,edId,k);
         remEdge(stId,edId);
+        //output();
     }
 }
 
@@ -357,12 +362,12 @@ void Graph::distribute(){
             if(changeEdgeNum-oldChangeEdgeNum>0)changeNodeNum++;
         }
         //cout<<"第"<<++cnt_iter<<"轮： 更新点数-"<<changeNodeNum<<"   更新边数-"<<changeEdgeNum<<endl;
-        cout<<"Step "<<setw(4)<<++cnt_iter<<":  Changed Point Num = "<<setw(4)<<changeNodeNum<<"  Changed Edge Num:"<<setw(4)<<changeEdgeNum<<endl;
+        cout<<"Step "<<setw(4)<<++cnt_iter<<":  Changed Point Num = "<<setw(4)<<changeNodeNum<<"  Changed Edge(Message) Num:"<<setw(4)<<changeEdgeNum<<endl;
         if(changeEdgeNum == 0){
             break;
         }
     }
-    
+    cout<<endl;
 }
 
 void Graph::output(){
@@ -393,25 +398,37 @@ void Graph::output(){
 }
 
 void Graph::writeFile(char * filename){
-    ofstream outFile(filename);
-    outFile<<"# Nodes:"<<nodeNum<<" Edges:"<<edgeNum<<endl;
-	outFile<<"Node 1\tNode 2\tTruss"<<endl;
+    FILE *fp;//定义一个文件指针
+    fp=fopen(strcat(filename,".truss"),"w");//以只写的方式打开文件，前面的参数是文件路径，后面的参数是表示只写
+    fprintf(fp,"# Nodes:%d Edges:%d\n",nodeNum,edgeNum);
+    fprintf(fp,"Node 1\tNode 2\tTruss\n");
+    int totalNnum = 0;
+    map<int ,int > InPercent;
     for (int i = 0; i < nodeNum; i++)
     {
         NeiNode  *nei = nodeList[i].firstNei;
         while (nei)
         {
-			if(nei->valid)
-				outFile<<setw(12)<<left<<nodeList[i].id<<"\t"<<setw(12)<<left<<nodeList[nei->id].id<<"\t"<<setw(12)<<left<<nei->tuss<<endl;
+            if(nodeList[i].id<nodeList[nei->id].id){
+                fprintf(fp,"%d\t%d\t%d\n",nodeList[i].id,nodeList[nei->id].id,nei->tuss);
+                totalNnum++;
+                InPercent[nei->tuss]++;
+            }
             nei = nei->next;
         }
+    }
+    fp=fopen(strcat(filename,".percent"),"w");//以只写的方式打开文件，前面的参数是文件路径，后面的参数是表示只写
+    fprintf(fp,"Truss\tPercent\n");
+    map<int ,int >::iterator it;
+    for (it = InPercent.begin(); it != InPercent.end(); it++)
+    {
+        fprintf(fp,"%d\t%f\n",it->first,(double)(((double)it->second)/totalNnum));
     }
 }
 
 
 //初始化Pr SuP  每条边的sup值用dp计算  并且将sup覆盖truss
 void Graph::initPrSup(){
-   
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
         while(nei){
@@ -639,10 +656,11 @@ bool Graph::inCntEdge(int st,int ed){
 	return true;
 }
 
-void Graph::upAdjust_2(int st,int ed){
+void Graph::upAdjust_2(int st,int ed,int deep){
 	NeiNode *i = nodeList[st].firstNei;
 	int t = i->tuss;
-	visit[make_pair(min(st,ed),max(st,ed))] = 1;;
+	visit[make_pair(min(st,ed),max(st,ed))] = 1;
+    maxDepth = max(maxDepth,deep);
 	//cout<<"fff"<< cntEdge.size()<<endl;
 	//cout<<"ADD@2:"<<min(st,ed)<<" "<<max(st,ed)<<"  "<<endl;
 	while(i){
@@ -651,23 +669,23 @@ void Graph::upAdjust_2(int st,int ed){
 			while(j){
 				if(j->valid && j->id!= st){
 					if(j->id == i->id) {
-						if(i->tuss == t&&j->tuss>t && !inCntEdge(st,i->id) ){
-							setTuss(st,i->id,1+getTuss(st,i->id));
+						if(i->tuss == t&&j->tuss>=t && !inCntEdge(st,i->id) ){
+							//setTuss(st,i->id,1+getTuss(st,i->id));
 							//changeEdge[make_pair(min(st,i->id),max(st,i->id))] += 1 ;
+                            //cout<<"ADD@2:"<<min(st,i->id)<<" "<<max(st,i->id)<<"  "<<endl;
 							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
-							upAdjust_2(min(st,i->id),max(st,i->id));
+							upAdjust_2(min(st,i->id),max(st,i->id),deep+1);
 							changeNodes.insert(st);
 							changeNodes.insert(i->id);
-							cntTotalChangedEdge++;
 						}
-						if(j->tuss == t&&i->tuss>t && !inCntEdge(ed,j->id) ){
-							setTuss(ed,j->id,1+getTuss(ed,j->id));
+						if(j->tuss == t&&i->tuss>=t && !inCntEdge(ed,j->id) ){
+							//setTuss(ed,j->id,1+getTuss(ed,j->id));
 							//changeEdge[make_pair(min(ed,i->id),max(ed,i->id))] += 1 ;
+                            //cout<<"ADD@2:"<<min(ed,i->id)<<" "<<max(ed,i->id)<<"  "<<endl;
 							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
-							upAdjust_2(min(ed,i->id),max(ed,i->id));
+							upAdjust_2(min(ed,i->id),max(ed,i->id),deep+1);
 							changeNodes.insert(ed);
 							changeNodes.insert(j->id);
-							cntTotalChangedEdge++;
 						}
 					}
 				}
@@ -680,6 +698,7 @@ void Graph::upAdjust_2(int st,int ed){
 }
 
 void Graph::upAdjust(int st, int ed){
+
 	NeiNode *i = nodeList[st].firstNei;
 	int t = i->tuss;
 	visit[make_pair(min(st,ed),max(st,ed))] = 1;;
@@ -688,26 +707,24 @@ void Graph::upAdjust(int st, int ed){
 			NeiNode *j = nodeList[ed].firstNei;
 			while(j){
 				if(j->valid && j->id!= st){
-					if(j->id == i->id) {
+					if(j->id == i->id ) {
 						//cout<<i->tuss<<" "<<j->tuss<<" "<<t<<endl;
-						if(i->tuss < t){
-							setTuss(st,i->id,1+getTuss(st,i->id));
+						if(i->tuss < t&& !inCntEdge(st,i->id)){
+							//setTuss(st,i->id,1+getTuss(st,i->id));
 							//changeEdge[make_pair(min(st,i->id),max(st,i->id))] += 1;
 							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
 							//cout<<"ADD:"<<min(st,i->id)<<" "<<max(st,i->id)<<"  "<<changeEdge[make_pair(min(st,i->id),max(st,i->id))]<<endl;
-							upAdjust_2(min(st,i->id),max(st,i->id));
+							upAdjust_2(min(st,i->id),max(st,i->id),1);
 							changeNodes.insert(t);
-							cntTotalChangedEdge++;
 							changeNodes.insert(i->id);
 						}
-						if(j->tuss < t){
-							setTuss(ed,j->id,1+getTuss(ed,j->id));
+						if(j->tuss < t && !inCntEdge(ed,j->id)){
+							//setTuss(ed,j->id,1+getTuss(ed,j->id));
 							//changeEdge[make_pair(min(ed,i->id),max(ed,i->id))] += 1 ;
 							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
 							//cout<<"ADD:"<<min(ed,i->id)<<" "<<max(ed,i->id)<<"  "<<changeEdge[make_pair(min(ed,i->id),max(ed,i->id))]<<endl;
-							upAdjust_2(min(ed,i->id),max(ed,i->id));
+							upAdjust_2(min(ed,i->id),max(ed,i->id),1);
 							changeNodes.insert(t);
-							cntTotalChangedEdge++;
 							changeNodes.insert(j->id);
 						}
 					}
@@ -719,76 +736,6 @@ void Graph::upAdjust(int st, int ed){
 	}
 	//cout<<"add return"<<endl;
 	
-}
-
-void Graph::downAdjust_2(int st,int ed){
-	NeiNode *i = nodeList[st].firstNei;
-	int t = i->tuss;
-	visit[make_pair(min(st,ed),max(st,ed))] = 1;;
-	//cout<<"fff"<< cntEdge.size()<<endl;
-	//cout<<"ADD@2:"<<min(st,ed)<<" "<<max(st,ed)<<"  "<<endl;
-	while(i){
-		if(i->valid && i->id != ed){
-			NeiNode *j = nodeList[ed].firstNei;
-			while(j){
-				if(j->valid && j->id!= st){
-					if(j->id == i->id) {
-						if(i->tuss == t&&j->tuss>t && !inCntEdge(st,i->id) ){
-							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
-							downAdjust_2(min(st,i->id),max(st,i->id));
-							changeNodes.insert(st);
-							changeNodes.insert(i->id);
-							cntTotalChangedEdge++;
-						}
-						if(j->tuss == t&&i->tuss>t && !inCntEdge(ed,j->id) ){
-							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
-							downAdjust_2(min(ed,i->id),max(ed,i->id));
-							changeNodes.insert(ed);
-							changeNodes.insert(j->id);
-							cntTotalChangedEdge++;
-						}
-					}
-				}
-				j = j->next;
-			}
-		}
-		i = i->next;
-	}
-}
-
-void Graph::downAdjust(int st, int ed){
-	NeiNode *i = nodeList[st].firstNei;
-	int t = i->tuss;
-	visit[make_pair(min(st,ed),max(st,ed))] = 1;;
-	while(i){
-		if(i->valid && i->id != ed){
-			NeiNode *j = nodeList[ed].firstNei;
-			while(j){
-				if(j->valid && j->id!= st){
-					if(j->id == i->id) {
-						if(i->tuss <= t){
-							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
-							//cout<<"ADD:"<<min(st,i->id)<<" "<<max(st,i->id)<<"  "<<changeEdge[make_pair(min(st,i->id),max(st,i->id))]<<endl;
-							downAdjust_2(min(st,i->id),max(st,i->id));
-							changeNodes.insert(t);
-							cntTotalChangedEdge++;
-							changeNodes.insert(i->id);
-						}
-						if(j->tuss <= t){
-							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
-							//cout<<"ADD:"<<min(ed,i->id)<<" "<<max(ed,i->id)<<"  "<<changeEdge[make_pair(min(ed,i->id),max(ed,i->id))]<<endl;
-							downAdjust_2(min(ed,i->id),max(ed,i->id));
-							changeNodes.insert(t);
-							cntTotalChangedEdge++;
-							changeNodes.insert(j->id);
-						}
-					}
-				}
-				j = j->next;
-			}
-		}
-		i = i->next;
-	}	
 }
 
 void Graph::dynamicInsert(int stId,int edId){
@@ -806,32 +753,65 @@ void Graph::dynamicInsert(int stId,int edId){
 	//cout<<"Dot:"<<s<<" "<<e<<" ->bound:"<<bd.up_bound<<" sup+2:" <<sp+2<<endl;
 
 	setTuss( stId,edId,min(sp+2,bd.up_bound));
-
-	upAdjust( stId, edId);
+//cout<<nodeList[stId].id <<" "<<nodeList[edId].id<<" Up_bound:"<<min(sp+2,bd.up_bound)<<endl;
+    upAdjust( stId, edId);
 	//cout<<"Adjust finished"<<endl;
-	
+	/*
 	set<pair<int,int> >::iterator it;
 	for(it =cntEdge.begin();it!=cntEdge.end();it++){
 		visit[*it] = 0;
 	}
 	cntEdge.clear();
 	//cout<<"Insert finish:"<<s<<" "<<e<<"<<<<<<<<<<<<<<<<<<<<<<"<<endl;
-	/*
+	*/
 	set<pair<int,int> >::iterator it;
 	for(it =cntEdge.begin();it!=cntEdge.end();it++){
 		//cout<<(*it).first<<" "<<(*it).second<<"  "<<changeEdge[*it]<<" "<<getTuss((*it).first,(*it).second)<<" "<<getSup((*it).first,(*it).second)+2<<endl;
-		int a = getSup((*it).first,(*it).second)+2;
-		int b = getTuss((*it).first,(*it).second)+changeEdge[*it];
+		int a = computeSup((*it).first,(*it).second)+2;
+		int b = getTuss((*it).first,(*it).second)+1;//changeEdge[*it];
+        //cout<<"xutao xitong d :"<<changeEdge[*it]<<endl;
 		int newTuss = min(a,b);
-		cntTotalChangedEdge += changeEdge[*it];
 		//cout<<a<<" "<<b<<endl;
-		//cout<<(*it).first<<" "<<(*it).second<<" "<< newTuss<<" "<<changeEdge[*it]<<" "<<getTuss((*it).first,(*it).second)<<" "<<getSup((*it).first,(*it).second)+2<<endl;
+//cout<<nodeList[(*it).first].id<<" "<<nodeList[(*it).second].id<<" newTruss:"<< newTuss<<"  getTruss and sup:"<<getTuss((*it).first,(*it).second)<<endl;
 		setTuss((*it).first, (*it).second,newTuss);
-		changeEdge[*it] = 0;
+		//changeEdge[*it] = 0;
 		visit[*it] = 0;
 	}
 	cntEdge.clear();
-	*/
+	visit[make_pair(min(stId,edId),max(stId,edId))] = 0;
+}
+
+void Graph::downAdjust(int st, int ed){
+	NeiNode *i = nodeList[st].firstNei;
+	int t = i->tuss;
+	visit[make_pair(min(st,ed),max(st,ed))] = 1;;
+	while(i){
+		if(i->valid && i->id != ed){
+			NeiNode *j = nodeList[ed].firstNei;
+			while(j){
+				if(j->valid && j->id!= st){
+					if(j->id == i->id) {
+						if(i->tuss <= t){
+							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
+							//cout<<"ADD:"<<min(st,i->id)<<" "<<max(st,i->id)<<"  "<<changeEdge[make_pair(min(st,i->id),max(st,i->id))]<<endl;
+							upAdjust_2(min(st,i->id),max(st,i->id),1);
+							changeNodes.insert(t);
+							changeNodes.insert(i->id);
+						}
+						if(j->tuss <= t){
+							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
+							//cout<<"ADD:"<<min(ed,i->id)<<" "<<max(ed,i->id)<<"  "<<changeEdge[make_pair(min(ed,i->id),max(ed,i->id))]<<endl;
+							upAdjust_2(min(ed,i->id),max(ed,i->id),1);
+							changeNodes.insert(t);
+							changeNodes.insert(j->id);
+						}
+					}
+				}
+				j = j->next;
+			}
+		}
+		i = i->next;
+	}	
 }
 
 void Graph::dynamicDelete(int stId,int edId){
@@ -850,11 +830,11 @@ void Graph::dynamicDelete(int stId,int edId){
 		int newTuss = min(a,b);
 		//cout<<(*it).first<<" "<<(*it).second<<" "<< newTuss<<" "<<a<<" "<<b<<endl;
 		setTuss((*it).first, (*it).second,newTuss);
-		cntTotalChangedEdge++;
 		visit[*it] = 0;
 	}
 	cntEdge.clear();
 	//cout<<"Delete finished"<<endl;
+    visit[make_pair(min(stId,edId),max(stId,edId))] = 0;
 }
 
 boundData Graph::bound(int st,int ed){
@@ -863,18 +843,16 @@ boundData Graph::bound(int st,int ed){
 	res.up_bound = 9999999;
 	res.low_bound = 9999999;
 	NeiNode *i = nodeList[st].firstNei;
-	int maxTuss = -1;
 	while(i){
 		if(i->valid && i->id != ed){
 			NeiNode *j = nodeList[ed].firstNei;
 			while(j){
 				if(j->valid && j->id!= st){
 					if(j->id == i->id) {
-						int a = getTuss(i->id,st);
-						int b = getTuss(j->id,ed);
+						int a = i->tuss;// getTuss(i->id,st);
+						int b = j->tuss;//getTuss(j->id,ed);
 						int d = min(a,b);
 						v.push_back(d);
-						maxTuss = max(maxTuss,d);
 					}
 				}
 				j = j->next;
@@ -884,7 +862,8 @@ boundData Graph::bound(int st,int ed){
 	}
 	int up = 0;
 	int low = 0;
-	while(maxTuss>0){
+    int maxTuss = v.size()+2;
+	while(maxTuss>2){
 		int cnt = 0;
 		int cnt2 = 0;
 		for(int q = 0;q<v.size();q++){
@@ -909,9 +888,11 @@ boundData Graph::bound(int st,int ed){
 	
 }
 
-
-
-
+void Graph::supInitDelete(int stId,int edId){
+    stId = Find(stId);
+	edId = Find(edId);
+    remEdge(stId,edId);
+}
 
 
 

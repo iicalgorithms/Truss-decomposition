@@ -1,10 +1,15 @@
 Linux:
 make ->  程序重新编译
-./main [filename] [m] [r]
+./main [filename] [method] [graphType] [computeType] [number] [write] 
+
 [filename]     -> 数据路径
-[m]            -> 求解模式：0-贪心 1-分布式 2-概率贪心
-[graphtype]    -> 图类型：0-static graph  1-temporal graph
-[a]			   -> 1-插入 2-删除
-[i]            -> 插入/删除 数量级
-[r]            -> 'r'-将truss值写入"output.txt"文件  
- 
+[method]       -> 求解模式：0-贪心 1-分布式
+[graphType]    -> 图类型：0-static graph  1-temporal graph
+[computeType]  -> 0-不插入不删除，直接计算
+			   -> 1-插入：逐条初始化并分布式计算 2-插入：批次插入初始化并分布式计算 3-插入：批次插入，初始化为Sup+2并分布式计算
+			   -> 4-删除：批次删除并分布式计算 5-删除：初始化min{sup+2，truss(e)}并分布式计算
+[number]       -> 插入/删除 数量级
+[write]        -> 'w'-将truss值写入"output.txt"文件  
+
+Windows:
+修改运行main.dat 

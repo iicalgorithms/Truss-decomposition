@@ -78,21 +78,14 @@ class Graph{
         void PrDistribute();
 		void dynamicInsert(int stId,int edId);
 		void dynamicDelete(int stId,int edId);
+        void supInitDelete(int stId,int edId);
 		void cover();//用sup的值来覆盖truss
 		int changedEdgeNum = 0;
 		int changedNodeNum = 0;
-		void outputDynamicInfo(int AddOrSub){
-			if(AddOrSub == 1){
-				cout<<"Total Affected nodes(number:"<<changeNodes.size()<<"}:"<<endl;
-				set<int >::iterator it;
-				for(it =changeNodes.begin();it!=changeNodes.end();it++){
-					cout<<*it<<" ";
-				}
-				cout<<endl;
-				cout<<"Total Affected edges number:"<<cntTotalChangedEdge<<endl;
-			}else if(AddOrSub == 2){
-				
-			}
+		void outputDynamicInfo(int computeType){
+			cout<<"Compute mode:"<<computeType<<endl;
+            cout<<"Total Affected nodes number:"<<changeNodes.size()<<endl;
+            cout<<"The depth of broadcast:"<< maxDepth <<endl;
 		}
 		
     private:
@@ -110,8 +103,7 @@ class Graph{
 		set<pair<int,int> > cntEdge;//需要改变的边
 		set<int > changeNodes;//涉及到的点
 		map<pair<int,int>,int> visit;//动态插入时边改变的数
-		int cntTotalChangedEdge = 0;
-		int addOrSub;
+        int maxDepth = -1;
 		
         void setTuss(int stId,int edId,int k);
         void remEdge(int stId,int edId);
@@ -121,10 +113,9 @@ class Graph{
         void outputSet();
 		int computeSup(int st,int ed);
 		boundData bound(int st,int ed);
-		void upAdjust(int st,int ed);//动态添边
-		void upAdjust_2(int st,int ed);//动态添边扩散
+		void upAdjust(int st,int ed);//动态添边  记录递归深度
+		void upAdjust_2(int st,int ed,int deep);//动态添边扩散
 		void downAdjust(int st,int ed);//动态删边
-		void downAdjust_2(int st,int ed);//动态删边扩散
 		int getTuss(int stId,int edId);
 		int getSup(int stId,int edId);
 		bool inCntEdge(int st,int ed);
