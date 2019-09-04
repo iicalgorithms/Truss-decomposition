@@ -9,7 +9,7 @@ Graph::Graph(){}
 void Graph::buildGraph(int edge_num,int node_num){
     edgeNum = edge_num;
     nodeNum = node_num;
-    nodeList = new GraphNode[node_num]();
+    nodeList = new GraphNode[node_num+10]();
     bin = new vector<pair<int,int> >[node_num-1](); 
 }
 
@@ -22,24 +22,28 @@ int Graph::Find(int id){
         return -1;
 }
 
-void Graph::addEdge(int stId,int edId){
-    int findSt = Find(stId),findEd = Find(edId);//map  将标号映射成下表
+void Graph::addEdge(int stId,int edId,int num=0){
+    //cout<<stId<<" "<<edId<<endl;
+    //if(num>236950) cout<<"fk"<<endl;
+    int findSt = Find(stId);//map  将标号映射成下表
     if(findSt<0){
         findSt = cnt;
         nodeList[cnt].id = stId;
         findId[stId] = cnt++;
     }
+    int findEd = Find(edId);
     if(findEd<0){
         findEd = cnt;
         nodeList[cnt].id = edId;
         findId[edId] = cnt++;
     }
+    //if(num>236950) cout<<"fk"<<endl;
     NeiNode *p = nodeList[findSt].firstNei;//无重边
     while(p){
         if(findEd == p->id && p->valid) return;
         p = p->next;
     }
-
+    //if(num>236950) cout<<"fk"<<endl;
     NeiNode *e = new NeiNode;
     e->id = findEd;
     e->next = nodeList[findSt].firstNei;
@@ -53,9 +57,9 @@ void Graph::addEdge(int stId,int edId){
     e->sup = 0;
     nodeList[findEd].firstNei = e;
     nodeList[findEd].degree ++;
-	
-	changeEdge[make_pair(min(findSt,findEd),max(findSt,findEd))] = 0;
+	//if(num>236950) cout<<"fk"<<endl;
 	visit[make_pair(min(findSt,findEd),max(findSt,findEd))] = 0;
+    //if(num>236950) cout<<"fk"<<endl;
 }
 
 void Graph::addEdge(int stId,int edId,double pr){
@@ -103,17 +107,18 @@ void Graph::addEdge(int stId,int edId,double pr){
 }
 
 void Graph::initSup(){
+    cout<<"Init sup start"<<endl;
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
         while(nei){
             if(nei->valid){
                 nei->sup = computeSup(k,nei->id);
+                //cout<<nei->sup<<endl;
             }
-			edge e(k,nei->id,0);
-            edgeSet.insert(e);
             nei = nei->next;
         }
     }
+    cout<<"Init sup complish"<<endl;
 }
 
 int Graph::computeSup(int st,int ed){
@@ -308,6 +313,7 @@ void Graph::greed(){
 }
 
 void Graph::distribute(){
+    cout<<"Start DIS_Algrithm"<<endl;
     int maxIter = 99999999;
     int cnt_iter = 0;
     while(maxIter--){
@@ -361,6 +367,10 @@ void Graph::distribute(){
             }
             if(changeEdgeNum-oldChangeEdgeNum>0)changeNodeNum++;
         }
+        if(startCntSteps){
+            totalMsgNumber += changeNodeNum;
+            totalSteps += 1;
+        }  
         //cout<<"第"<<++cnt_iter<<"轮： 更新点数-"<<changeNodeNum<<"   更新边数-"<<changeEdgeNum<<endl;
         cout<<"Step "<<setw(4)<<++cnt_iter<<":  Changed Point Num = "<<setw(4)<<changeNodeNum<<"  Changed Edge(Message) Num:"<<setw(4)<<changeEdgeNum<<endl;
         if(changeEdgeNum == 0){
@@ -399,6 +409,10 @@ void Graph::output(){
 
 void Graph::writeFile(char * filename){
     FILE *fp;//定义一个文件指针
+    string tmp="";
+    for(int i=0;i<strlen(filename);i++)
+    tmp+=filename[i];
+    cout<<filename<<endl;
     fp=fopen(strcat(filename,".truss"),"w");//以只写的方式打开文件，前面的参数是文件路径，后面的参数是表示只写
     fprintf(fp,"# Nodes:%d Edges:%d\n",nodeNum,edgeNum);
     fprintf(fp,"Node 1\tNode 2\tTruss\n");
@@ -417,7 +431,12 @@ void Graph::writeFile(char * filename){
             nei = nei->next;
         }
     }
+    filename = (char *)tmp.c_str();
     fp=fopen(strcat(filename,".percent"),"w");//以只写的方式打开文件，前面的参数是文件路径，后面的参数是表示只写
+    fprintf(fp,"Total Affected nodes number:%d\n",changeNodes.size());
+    fprintf(fp,"The depth of broadcast:%d\n",maxDepth);
+    fprintf(fp,"Total Message Number:%d\n",totalMsgNumber);
+    fprintf(fp,"Total steps:%d\n\n",totalSteps);
     fprintf(fp,"Truss\tPercent\n");
     map<int ,int >::iterator it;
     for (it = InPercent.begin(); it != InPercent.end(); it++)
@@ -555,6 +574,7 @@ void Graph::PrRemEdge(int stId,int edId){
 }
 
 void Graph::deleteEdge(int st,int ed){
+    //cout<<"st:"<<st<<" ed:"<<ed<<endl;
     NeiNode *i = nodeList[st].firstNei;
     while (i)
     {
@@ -742,7 +762,7 @@ void Graph::dynamicInsert(int stId,int edId){
 	//cout<<"Insert:"<<stId<<" "<<edId<<"<<<<<<<<<<<<<<<<<<<<<<"<<endl;
 	int s = stId;
 	int e = edId;
-	addEdge(stId,edId);
+	addEdge(stId,edId,0);
 	stId = Find(stId);
 	edId = Find(edId);
 	int sp = computeSup(stId,edId);
@@ -891,7 +911,9 @@ boundData Graph::bound(int st,int ed){
 void Graph::supInitDelete(int stId,int edId){
     stId = Find(stId);
 	edId = Find(edId);
-    remEdge(stId,edId);
+    int st = min(stId,edId);
+    int ed = max(stId,edId);
+    deleteEdge(st,ed);
 }
 
 

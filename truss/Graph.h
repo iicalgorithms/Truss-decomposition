@@ -66,7 +66,7 @@ class Graph{
         int getEdgeNum(){return edgeNum;}
         int getNodeNum(){return nodeNum;}
         void initSup();
-        void addEdge(int stId,int edId);
+        void addEdge(int stId,int edId,int num);
         void addEdge(int stId,int edId,double pr);
         void output();
         void egdeBinSort();
@@ -82,11 +82,16 @@ class Graph{
 		void cover();//用sup的值来覆盖truss
 		int changedEdgeNum = 0;
 		int changedNodeNum = 0;
+        int computeType = 0;
+        int totalSteps = 0;
 		void outputDynamicInfo(int computeType){
 			cout<<"Compute mode:"<<computeType<<endl;
             cout<<"Total Affected nodes number:"<<changeNodes.size()<<endl;
             cout<<"The depth of broadcast:"<< maxDepth <<endl;
+            cout<<"Total steps:"<< totalSteps <<endl;   
+            cout<<"Total Message Number:"<<totalMsgNumber<<endl;
 		}
+        int startCntSteps = 0;
 		
     private:
         int edgeNum;
@@ -104,6 +109,7 @@ class Graph{
 		set<int > changeNodes;//涉及到的点
 		map<pair<int,int>,int> visit;//动态插入时边改变的数
         int maxDepth = -1;
+        int totalMsgNumber = 0;
 		
         void setTuss(int stId,int edId,int k);
         void remEdge(int stId,int edId);

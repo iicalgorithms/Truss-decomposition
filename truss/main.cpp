@@ -20,7 +20,8 @@ string temp;//文件输出临时存储字符串
 
 //在进行随机插入or删除的时候，需要进行抽样
 int changeNum;//抽样数目
-map<int,int > rdm; //用于随机抽样,进行shuffle随机排列
+map<int,int > rdm; //用于随机抽样,map去重
+vector<int > shhuffle_rdm;//用于随机抽样,进行shuffle随机排列
 vector<int> v;//保存抽样出的数据的下标
 vector<int > stId;//要插入/删除边的起点
 vector<int > edId;//要插入/删除边的终点
@@ -36,6 +37,26 @@ int Pow(int k){
 	int res = 1;
 	while(k--) res=res*10;
 	return res;
+}
+
+string getName(char *filename){
+    int len = strlen(filename);
+    int st=-1,ed = -1;
+    int fg1 = 0,fg2 = 0;
+    for(int i = len-1;i>=0;i--){
+        if(filename[i]=='.'&&!fg1) {
+            fg1 = 1;
+            ed = i-1;
+        }
+        if((filename[i]=='/'||filename[i]=='\\')&&!fg2) {
+            fg2 = 1;
+            st = i+1;
+        }
+    }
+    if(st == -1) st = 0;
+    string res = "";
+    for(int i = st;i<=ed;i++) res += filename[i];
+    return res;
 }
 
 int main(int argc,char * argv[]){
@@ -67,34 +88,42 @@ int main(int argc,char * argv[]){
                 string t1,t2,t3;
                 str>>t1>>t2>>node_num>>t3>>edge_num;
                 //cout<<temp<<endl;
-                //cout<<t1<<" "<<t2<<" "<<node_num<<" "<<t3<<" "<<edge_numm<<"  ss"<<endl;
+                //cout<<t1<<" "<<t2<<" "<<node_num<<" "<<t3<<" "<<edge_num<<"  ss"<<endl;
                 G.buildGraph(edge_num,node_num);
             }else continue;
         }else break;
     }
-	
+	cout<<"fk"<<endl;
 	changeNum = number;
 	changeNum = Pow(changeNum);
 	if(graphType == 0 ){
 		//srand((int)time(0));
 		srand(100);
 		//changeNum *= (rand()%10+1);
-		if(changeNum > edge_num) changeNum = edge_num;
-		int ct = 0;
+		if(changeNum > edge_num) changeNum = edge_num/2;
+		/*/int ct = 0;
 		while(ct<changeNum){
 			int tp = random(edge_num);
 			if(rdm[tp]!=1) {
 				ct++;
 				rdm[tp] = 1;
 				v.push_back(tp);
+				cout<<tp<<" "<<ct<<" "<<v.size()<<" "<<edge_num<<" "<<changeNum <<endl;
 			}
-		}
+			cout<<"?"<<endl;
+		}*/
+		for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
+		random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
+		for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
 		if(!v.empty()) sort(v.begin(),v.end());
 	}else if(graphType == 1){
 		for(int i=0;i<changeNum;i++){
 			v.push_back(edge_num-changeNum+i);
 		}
 	}
+
+	//for (int i = 0; i < v.size(); i++) 		cout<<v[i]<<endl;
+	
 
 	int rNum = 0;
 	int pNum = 0;
@@ -114,7 +143,7 @@ int main(int argc,char * argv[]){
             }else{
                 str>>st>>ed;
                 if(!needInsert) {
-					G.addEdge(st,ed);
+					G.addEdge(st,ed,rNum);
 				}
             }
 			if(needInsert||computeType==4||computeType==5){//如果不需要插入或者删除
@@ -122,6 +151,7 @@ int main(int argc,char * argv[]){
 				edId.push_back(max(st,ed));				
 			}
 			rNum ++;
+			//cout<<rNum<<endl;
         }
     }while(getline(in,temp));
 
@@ -130,6 +160,7 @@ int main(int argc,char * argv[]){
 		G.cover();
         G.greed();
 	}else if(method == 1){
+		cout<<"start"<<endl;
 		G.initSup();
 		G.cover();
         G.distribute();
@@ -165,7 +196,7 @@ int main(int argc,char * argv[]){
 	
 	//动态图添边，删边之前，计算Truss
 		//G.output();
-
+	G.startCntSteps = 1;
 	switch (computeType)
 	{
 	case 0:
@@ -181,13 +212,13 @@ int main(int argc,char * argv[]){
 		G.distribute();
 		break;
 	case 3:
-		for(int i=0;i<changeNum;i++) G.addEdge(stId[i],edId[i]);
+		for(int i=0;i<changeNum;i++) G.addEdge(stId[i],edId[i],0);
 		G.initSup();
 		G.cover();
 		G.distribute();
 		break;
 	case 4:
-		for(int i=0;i<changeNum;i++){
+		for(int i=0;i<changeNum;i++){	
 			G.dynamicDelete(stId[i],edId[i]);
 			G.distribute();
 		}
@@ -195,8 +226,8 @@ int main(int argc,char * argv[]){
 	case 5:
 		for(int i=0;i<changeNum;i++){
 			G.supInitDelete(stId[i],edId[i]);
-			G.distribute();
 		}
+		G.distribute();
 		break;
 	default:
 		cout<<"Wrong modle!"<<endl;
@@ -205,6 +236,9 @@ int main(int argc,char * argv[]){
 	if(computeType!=0 ) G.outputDynamicInfo(computeType);
     
     if(write == 'w'){
-        G.writeFile(filename);
+		string str = getName(filename);
+		str =  argv[5][0] + str;
+		//cout<<str<<endl;
+        G.writeFile((char *)str.c_str());
     }
 }
