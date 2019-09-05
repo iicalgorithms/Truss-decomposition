@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include <cmath>
+#include <stack>
 using namespace std;
 
 struct triNode
@@ -28,6 +29,8 @@ struct NeiNode{
     int valid = 1;
     int sup;
     double PrSup = 0;
+    int SS = 0;
+    int CS = 0;
     int tuss = 0;
     double Pr = 0.1;
 	//int eeMap = 0;
@@ -66,7 +69,7 @@ class Graph{
         int getEdgeNum(){return edgeNum;}
         int getNodeNum(){return nodeNum;}
         void initSup();
-        void addEdge(int stId,int edId,int num);
+        void addEdge(int stId,int edId);
         void addEdge(int stId,int edId,double pr);
         void output();
         void egdeBinSort();
@@ -79,7 +82,10 @@ class Graph{
 		void dynamicInsert(int stId,int edId);
 		void dynamicDelete(int stId,int edId);
         void supInitDelete(int stId,int edId);
+        void centerInsert(int stId,int edId);
 		void cover();//用sup的值来覆盖truss
+        void initSuperSup();
+        void initConstrainSup();
 		int changedEdgeNum = 0;
 		int changedNodeNum = 0;
         int computeType = 0;
@@ -110,6 +116,10 @@ class Graph{
 		map<pair<int,int>,int> visit;//动态插入时边改变的数
         int maxDepth = -1;
         int totalMsgNumber = 0;
+        map<pair<int,int>,int> Vset;
+        map<pair<int,int>,int> Xset;
+        map<pair<int,int>,int > Sset;
+        stack<pair<int,int> > Stack;
 		
         void setTuss(int stId,int edId,int k);
         void remEdge(int stId,int edId);
@@ -122,9 +132,11 @@ class Graph{
 		void upAdjust(int st,int ed);//动态添边  记录递归深度
 		void upAdjust_2(int st,int ed,int deep);//动态添边扩散
 		void downAdjust(int st,int ed);//动态删边
-		int getTuss(int stId,int edId);
-		int getSup(int stId,int edId);
+		int getEdgeMess(int stId,int edId,int model);
 		bool inCntEdge(int st,int ed);
+        int computeSuperSup(int st,int ed,int truss);
+        int computeConstrainSup(int st,int ed,int truss);
+        void Eliminate(pair<int,int>,int);
 };
 
 /*

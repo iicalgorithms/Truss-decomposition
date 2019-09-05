@@ -93,37 +93,22 @@ int main(int argc,char * argv[]){
             }else continue;
         }else break;
     }
-	cout<<"fk"<<endl;
-	changeNum = number;
-	changeNum = Pow(changeNum);
-	if(graphType == 0 ){
-		//srand((int)time(0));
-		srand(100);
-		//changeNum *= (rand()%10+1);
-		if(changeNum > edge_num) changeNum = edge_num/2;
-		/*/int ct = 0;
-		while(ct<changeNum){
-			int tp = random(edge_num);
-			if(rdm[tp]!=1) {
-				ct++;
-				rdm[tp] = 1;
-				v.push_back(tp);
-				cout<<tp<<" "<<ct<<" "<<v.size()<<" "<<edge_num<<" "<<changeNum <<endl;
+
+	if(graphType!=2){
+		changeNum = number;
+		changeNum = Pow(changeNum);
+		if(graphType == 0 ){
+			for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
+			random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
+			for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
+			if(!v.empty()) sort(v.begin(),v.end());
+		}else if(graphType == 1){
+			for(int i=0;i<changeNum;i++){
+				v.push_back(edge_num-changeNum+i);
 			}
-			cout<<"?"<<endl;
-		}*/
-		for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
-		random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
-		for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
-		if(!v.empty()) sort(v.begin(),v.end());
-	}else if(graphType == 1){
-		for(int i=0;i<changeNum;i++){
-			v.push_back(edge_num-changeNum+i);
 		}
 	}
-
 	//for (int i = 0; i < v.size(); i++) 		cout<<v[i]<<endl;
-	
 
 	int rNum = 0;
 	int pNum = 0;
@@ -143,7 +128,7 @@ int main(int argc,char * argv[]){
             }else{
                 str>>st>>ed;
                 if(!needInsert) {
-					G.addEdge(st,ed,rNum);
+					G.addEdge(st,ed);
 				}
             }
 			if(needInsert||computeType==4||computeType==5){//如果不需要插入或者删除
@@ -166,36 +151,11 @@ int main(int argc,char * argv[]){
         G.distribute();
 	}else cout<<"Wrong modle."<<endl;
 
-/*switch(method){
-		case 0:
-		break;
-		G.initSup();
-		G.cover();
-        G.greed();
-		case 1:
-		G.initSup();
-		G.cover();
-        G.distribute();
-		break;
-		case 2:
-		G.initPrSup();//概率图中 sup和cover暂时没有分开
-        G.PrGreed();
-		break;
-		case 3:
-		G.initPrSup();
-        G.PrGreed();
-		break;
-		case 4:
-		G.initPrSup();
-        G.PrDistribute();
-		break;
-		default:
-		cout<<"Wrong modle."<<endl;
-		break;
-	} */
-	
-	//动态图添边，删边之前，计算Truss
-		//G.output();
+	if(graphType == 2){
+		G.initSuperSup();
+		G.initConstrainSup();
+	}
+
 	G.startCntSteps = 1;
 	switch (computeType)
 	{
@@ -230,10 +190,11 @@ int main(int argc,char * argv[]){
 		G.distribute();
 		break;
 	default:
-		cout<<"Wrong modle!"<<endl;
+		if(graphType!=2)	
+			cout<<"Wrong modle!"<<endl;
 		break;
 	}
-	if(computeType!=0 ) G.outputDynamicInfo(computeType);
+	if(computeType!=0 &&graphType!=2 ) G.outputDynamicInfo(computeType);
     
     if(write == 'w'){
 		string str = getName(filename);
