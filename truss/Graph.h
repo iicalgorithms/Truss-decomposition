@@ -4,6 +4,9 @@
 #include <set>
 #include <cmath>
 #include <stack>
+#include <time.h>
+#include <fstream>
+#include <stdlib.h>
 using namespace std;
 
 struct triNode
@@ -48,15 +51,26 @@ struct GraphNode
 struct edge
 {
     int st,ed;
-    double PrSup;
-    edge(int s,int e,double p ){st = s;ed= e;PrSup = p;}
+    int st2,ed2;
+    int sup;
+    edge(int s,int e,int p ){st = s;ed= e;sup = p;}
     edge(){}
 };
+
 struct cmp{  
     bool operator ()(const edge a , const edge b) {
-        if(a.PrSup!=b.PrSup)
-            return a.PrSup < b.PrSup;
+        if(a.sup!=b.sup)
+            return a.sup < b.sup;
         else if(a.st!=b.st)
+            return a.st < b.st;
+        return a.ed<b.ed;
+    }
+};  
+
+
+struct cmp2{  
+    bool operator ()(const edge a , const edge b) {
+        if(a.st!=b.st)
             return a.st < b.st;
         return a.ed<b.ed;
     }
@@ -83,12 +97,12 @@ class Graph{
 		void dynamicDelete(int stId,int edId);
         void supInitDelete(int stId,int edId);
         void centerInsert(int stId,int edId);
+        void centerMultInsert(vector<int> stIds,vector<int > edIds);
 		void cover();//用sup的值来覆盖truss
         void initSuperSup();
         void initConstrainSup();
 		int changedEdgeNum = 0;
 		int changedNodeNum = 0;
-        int computeType = 0;
         int totalSteps = 0;
 		void outputDynamicInfo(int computeType){
 			cout<<"Compute mode:"<<computeType<<endl;
@@ -98,7 +112,33 @@ class Graph{
             cout<<"Total Message Number:"<<totalMsgNumber<<endl;
 		}
         int startCntSteps = 0;
-		
+        string logfile = "log.txt";
+        void log(int cycleNumber,int number,double time){
+            FILE *fp;//定义一个文件指针
+            fp=fopen(logfile.c_str(),"a");//以只写的方式打开文件，前面的参数是文件路径，后面的参数是表示只写
+            if(fp){
+                fprintf(fp,"Parameter Message : %s %d %d %d %d \n", filename ,method,graphType,computeType,enumber);
+                fprintf(fp,"Number of cycles: %d \n", cycleNumber);
+                fprintf(fp,"Max inserted edges number of all cycles: %d \n", number);                
+                fprintf(fp,"Time: %f mm\n", time);                
+                fprintf(fp,"--------------------------------\n\n");                
+            }else cout<<"Error occurred when open the file!"<<endl;
+            fclose(fp);
+        }
+		char * filename ;//文件路径
+        int method = -1;//求解方法 0-贪心 1-分布式
+        int graphType = -1;//图类型：0-static graph  1-temporal graph
+        int computeType = -1;//0-不插入不删除 1-插入：逐条初始化并分布式计算 2-插入：批次插入初始化并分布式计算 3-插入：批次插入，初始化为Sup+2并分布式计算 4-删除：批次删除并分布式计算 5-删除：初始化min{sup+2，truss(e)}并分布式计算
+        int enumber = -1; //插入/删除 数量级
+        void recoard(char *file,int m,int g,int c,int n){
+            filename = file;
+            method  = m;
+            graphType = g;
+            computeType = c;
+            enumber = n;
+        }
+
+
     private:
         int edgeNum;
         int nodeNum;
@@ -120,6 +160,8 @@ class Graph{
         map<pair<int,int>,int> Xset;
         map<pair<int,int>,int > Sset;
         stack<pair<int,int> > Stack;
+        clock_t startTime;
+        clock_t endTime;
 		
         void setTuss(int stId,int edId,int k);
         void remEdge(int stId,int edId);
@@ -136,7 +178,11 @@ class Graph{
 		bool inCntEdge(int st,int ed);
         int computeSuperSup(int st,int ed,int truss);
         int computeConstrainSup(int st,int ed,int truss);
-        void Eliminate(pair<int,int>,int);
+        void Eliminate(pair<int,int> e,int t);
+        void enableAllNodes();
+        int computeLB(int st,int ed);
+        void centerAdjust(int st,int ed,int UB);
+
 };
 
 /*

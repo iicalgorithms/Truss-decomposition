@@ -1,0 +1,18 @@
+Parameter Message : CA-GrQc.txt 1 0 7 3 
+Number of cycles: 254 
+Max inserted edges number of all cycles: 127 
+Time: 92000.000000 
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 0 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 0 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 89000.000000 mm
+--------------------------------
+

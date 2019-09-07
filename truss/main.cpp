@@ -67,6 +67,7 @@ int main(int argc,char * argv[]){
 	computeType = argv[4][0] - '0';
 	number = argv[5][0] - '0';
 	write = argv[6][0];
+	G.recoard(filename,method,graphType,computeType,number);
 
     ifstream in(filename);
     if(!in.is_open()) cout<<"fail to open file!\n"<<endl;
@@ -94,20 +95,22 @@ int main(int argc,char * argv[]){
         }else break;
     }
 
-	if(graphType!=2){
-		changeNum = number;
-		changeNum = Pow(changeNum);
-		if(graphType == 0 ){
-			for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
-			random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
-			for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
-			if(!v.empty()) sort(v.begin(),v.end());
-		}else if(graphType == 1){
-			for(int i=0;i<changeNum;i++){
-				v.push_back(edge_num-changeNum+i);
-			}
+	
+	changeNum = number;
+	changeNum = Pow(changeNum);
+	if(graphType == 0 ){
+		for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
+		random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
+		for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
+		if(!v.empty()) sort(v.begin(),v.end());
+	}else if(graphType == 1){
+		for(int i=0;i<changeNum;i++){
+			v.push_back(edge_num-changeNum+i);
 		}
+	}else if(graphType == 2){
+		v.push_back(rand()%edge_num);
 	}
+	
 	//for (int i = 0; i < v.size(); i++) 		cout<<v[i]<<endl;
 
 	int rNum = 0;
@@ -116,7 +119,7 @@ int main(int argc,char * argv[]){
         istringstream str(temp);
         if(temp[0] != '#'){
 			int needInsert = 0;
-			if(computeType<=3 && computeType>=1 && !v.empty() && v[pNum] == rNum && pNum<changeNum ){	
+			if(((computeType<=3 && computeType>=1)||computeType == 6 ||computeType == 7) && !v.empty() && v[pNum] == rNum && pNum<changeNum ){	
 				pNum++;
 				needInsert = 1;
 			}		
@@ -143,18 +146,12 @@ int main(int argc,char * argv[]){
 	if(method == 0){
 		G.initSup();
 		G.cover();
-        G.greed();
+        G.greed();			
 	}else if(method == 1){
-		cout<<"start"<<endl;
 		G.initSup();
 		G.cover();
         G.distribute();
 	}else cout<<"Wrong modle."<<endl;
-
-	if(graphType == 2){
-		G.initSuperSup();
-		G.initConstrainSup();
-	}
 
 	G.startCntSteps = 1;
 	switch (computeType)
@@ -189,12 +186,20 @@ int main(int argc,char * argv[]){
 		}
 		G.distribute();
 		break;
+	case 6:
+		for(int i=0;i<changeNum;i++){	
+			G.centerInsert(stId[i],edId[i]);
+		}
+		break;
+	case 7:
+		G.centerMultInsert(stId,edId);
+		break;
 	default:
 		if(graphType!=2)	
 			cout<<"Wrong modle!"<<endl;
 		break;
 	}
-	if(computeType!=0 &&graphType!=2 ) G.outputDynamicInfo(computeType);
+	if(computeType!=0 &&graphType!=2 &&computeType !=6 &&computeType!=7) G.outputDynamicInfo(computeType);
     
     if(write == 'w'){
 		string str = getName(filename);
