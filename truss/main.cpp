@@ -25,6 +25,7 @@ vector<int > shhuffle_rdm;//用于随机抽样,进行shuffle随机排列
 vector<int> v;//保存抽样出的数据的下标
 vector<int > stId;//要插入/删除边的起点
 vector<int > edId;//要插入/删除边的终点
+set<pair<int,int> > clearSet;
 
 char * filename ;//文件路径
 int method = -1;//求解方法 0-贪心 1-分布式
@@ -90,14 +91,27 @@ int main(int argc,char * argv[]){
                 str>>t1>>t2>>node_num>>t3>>edge_num;
                 //cout<<temp<<endl;
                 //cout<<t1<<" "<<t2<<" "<<node_num<<" "<<t3<<" "<<edge_num<<"  ss"<<endl;
-                G.buildGraph(edge_num,node_num);
             }else continue;
         }else break;
     }
+	do{
+		istringstream str(temp);
+		if(temp[0] != '#'){
+			int st,ed;
+			str>>st>>ed;
+			int a = min(st,ed);
+			int b = max(st,ed);
+			clearSet.insert(make_pair(a,b));
+			//cout<<a<<" "<<b<<" "<<clearSet.size()<<endl;
+		}
+    }while(getline(in,temp));
+	edge_num = clearSet.size();
+	G.buildGraph(edge_num,node_num);
 
 	
 	changeNum = number;
 	changeNum = Pow(changeNum);
+	srand(100);
 	if(graphType == 0 ){
 		for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
 		random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
@@ -115,33 +129,27 @@ int main(int argc,char * argv[]){
 
 	int rNum = 0;
 	int pNum = 0;
-    do{
-        istringstream str(temp);
-        if(temp[0] != '#'){
+    set<pair<int,int> >::iterator  iter;
+	for(iter = clearSet.begin();iter!=clearSet.end();iter++){
 			int needInsert = 0;
 			if(((computeType<=3 && computeType>=1)||computeType == 6 ||computeType == 7) && !v.empty() && v[pNum] == rNum && pNum<changeNum ){	
+				//cout<<rNum<<" "<<pNum<<endl;
 				pNum++;
 				needInsert = 1;
 			}		
-			int st,ed;
-            if(argv[2][0] == '2'|| argv[2][0] == '3'){//如果是概率边的情况
-                double pr;
-                str>>st>>ed>>pr;
-				if(!needInsert) G.addEdge(st,ed,pr);
-            }else{
-                str>>st>>ed;
-                if(!needInsert) {
-					G.addEdge(st,ed);
-				}
-            }
-			if(needInsert||computeType==4||computeType==5){//如果不需要插入或者删除
+			int st = (*iter).first;
+            int ed = (*iter).second;
+			//if(needInsert) cout<<st<<" "<<ed<<endl;;
+			if(!needInsert) {
+				G.addEdge(st,ed);
+			}
+			if(needInsert||computeType==4||computeType==5){//如果需要插入或者删除
 				stId.push_back(min(st,ed));
 				edId.push_back(max(st,ed));				
 			}
 			rNum ++;
 			//cout<<rNum<<endl;
-        }
-    }while(getline(in,temp));
+    }
 
 	if(method == 0){
 		G.initSup();
@@ -153,6 +161,7 @@ int main(int argc,char * argv[]){
         G.distribute();
 	}else cout<<"Wrong modle."<<endl;
 
+	G.enableAllNodes();
 	G.startCntSteps = 1;
 	switch (computeType)
 	{
@@ -188,7 +197,7 @@ int main(int argc,char * argv[]){
 		break;
 	case 6:
 		for(int i=0;i<changeNum;i++){	
-			G.centerInsert(stId[i],edId[i]);
+			G.centerInsert(stId[i],edId[i],0);
 		}
 		break;
 	case 7:

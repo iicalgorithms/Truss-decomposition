@@ -24,20 +24,19 @@ int Graph::Find(int id){
         return -1;
 }
 
-void Graph::addEdge(int stId,int edId){
-    //cout<<stId<<" "<<edId<<endl;
-    int findSt = Find(stId);//map  将标号映射成下表
+int Graph::MapToIndex(int stId){
+    int findSt = Find(stId);
     if(findSt<0){
         findSt = cnt;
         nodeList[cnt].id = stId;
         findId[stId] = cnt++;
     }
-    int findEd = Find(edId);
-    if(findEd<0){
-        findEd = cnt;
-        nodeList[cnt].id = edId;
-        findId[edId] = cnt++;
-    }
+    return findSt;
+}
+
+void Graph::addEdge(int stId,int edId){
+    int findSt = MapToIndex(stId);
+    int findEd = MapToIndex(edId);
     NeiNode *p = nodeList[findSt].firstNei;//无重边
     while(p){
         if(findEd == p->id && p->valid) return;
@@ -64,15 +63,13 @@ void Graph::addEdge(int stId,int edId,double pr){
 	if(stId == edId){//无自环
         return;
     }
-    if(stId == edId){
-        return;
-    }
-    int findSt = Find(stId),findEd = Find(edId);
+    int findSt = Find(stId);
     if(findSt<0){
         findSt = cnt;
         nodeList[cnt].id = stId;
         findId[stId] = cnt++;
     }
+    int findEd = Find(edId);
     if(findEd<0){
         findEd = cnt;
         nodeList[cnt].id = edId;
@@ -104,7 +101,7 @@ void Graph::addEdge(int stId,int edId,double pr){
 }
 
 void Graph::initSup(){
-    cout<<"Init support start"<<endl;
+    //cout<<"Init support start"<<endl;
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
         while(nei){
@@ -115,11 +112,11 @@ void Graph::initSup(){
             nei = nei->next;
         }
     }
-    cout<<"Init support complish"<<endl;
+    //cout<<"Init support complish"<<endl;
 }
 
 void Graph::initSuperSup(){
-    cout<<"Init SS start"<<endl;
+    //cout<<"Init SS start"<<endl;
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
         while(nei){
@@ -130,10 +127,10 @@ void Graph::initSuperSup(){
             nei = nei->next;
         }
     }
-    cout<<"Init SS complish"<<endl;
+    //cout<<"Init SS complish"<<endl;
 }
 void Graph::initConstrainSup(){
-    cout<<"Init CS start"<<endl;
+    //cout<<"Init CS start"<<endl;
     for (int k = 0; k < nodeNum; k++){
         NeiNode *nei = nodeList[k].firstNei;
         while(nei){
@@ -144,7 +141,7 @@ void Graph::initConstrainSup(){
             nei = nei->next;
         }
     }
-    cout<<"Init CS complish"<<endl;
+    //cout<<"Init CS complish"<<endl;
 }
 
 int Graph::computeSup(int st,int ed){
@@ -202,7 +199,7 @@ int Graph::computeConstrainSup(int st,int ed,int truss){
                             if(j->tuss == minn){
                                 if(j->SS <= truss-2) flg = 0;
                             }
-                            if(flg) res ++;
+                            if(flg == 1) res ++;
                         }
                     }
 				}
@@ -229,12 +226,28 @@ void Graph::cover(){
 }
 
 //将边的truss设置为k
-void Graph::setTuss(int stId,int edId,int k){
+void Graph::setEdgeMess(int stId,int edId,int k,int model){
     NeiNode *p = nodeList[stId].firstNei;
     while (p)
     {
         if(p->id == edId){
-            p->tuss = k;
+            switch(model)
+            {
+            case 1:
+                p->tuss = k;
+                break;
+            case 2:
+                p->sup = k;
+                break;
+            case 3:
+                p->SS = k;
+                break;
+            case 4:
+                p->CS = k;
+                break;
+            default:
+                break;
+            }
 			break;
         }
         p = p->next;
@@ -243,7 +256,23 @@ void Graph::setTuss(int stId,int edId,int k){
     while (p)
     {
         if(p->id == stId){
-            p->tuss = k;
+            switch(model)
+            {
+            case 1:
+                p->tuss = k;
+                break;
+            case 2:
+                p->sup = k;
+                break;
+            case 3:
+                p->SS = k;
+                break;
+            case 4:
+                p->CS = k;
+                break;
+            default:
+                break;
+            }
 			break;
         }
         p = p->next;
@@ -364,7 +393,7 @@ void Graph::greed(){
         int edId = bin[minSup][0].second;
         bin[minSup].erase(bin[minSup].begin()+0);
         //cout<<nodeList[stId].id<<" "<<nodeList[edId].id<<endl;
-        setTuss(stId,edId,k);
+        setEdgeMess(stId,edId,k,1);
         remEdge(stId,edId);
         //output();
     }
@@ -588,7 +617,7 @@ void Graph::PrGreed(){
         int edId = (*edgeSet.begin()).ed;
         edgeSet.erase(*edgeSet.begin());
         //cout<<nodeList[stId].id<<" - "<<nodeList[edId].id<<endl;
-        setTuss(stId,edId,k);
+        setEdgeMess(stId,edId,k,1);
         PrRemEdge(stId,edId);
     }
 }
@@ -748,7 +777,7 @@ void Graph::upAdjust_2(int st,int ed,int deep){
 				if(j->valid && j->id!= st){
 					if(j->id == i->id) {
 						if(i->tuss == t&&j->tuss>=t && !inCntEdge(st,i->id) ){
-							//setTuss(st,i->id,1+getTuss(st,i->id));
+							//setEdgeMess(st,i->id,1+getTuss(st,i->id));
 							//changeEdge[make_pair(min(st,i->id),max(st,i->id))] += 1 ;
                             //cout<<"ADD@2:"<<min(st,i->id)<<" "<<max(st,i->id)<<"  "<<endl;
 							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
@@ -757,7 +786,7 @@ void Graph::upAdjust_2(int st,int ed,int deep){
 							changeNodes.insert(i->id);
 						}
 						if(j->tuss == t&&i->tuss>=t && !inCntEdge(ed,j->id) ){
-							//setTuss(ed,j->id,1+getTuss(ed,j->id));
+							//setEdgeMess(ed,j->id,1+getTuss(ed,j->id));
 							//changeEdge[make_pair(min(ed,i->id),max(ed,i->id))] += 1 ;
                             //cout<<"ADD@2:"<<min(ed,i->id)<<" "<<max(ed,i->id)<<"  "<<endl;
 							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
@@ -788,7 +817,7 @@ void Graph::upAdjust(int st, int ed){
 					if(j->id == i->id ) {
 						//cout<<i->tuss<<" "<<j->tuss<<" "<<t<<endl;
 						if(i->tuss < t&& !inCntEdge(st,i->id)){
-							//setTuss(st,i->id,1+getTuss(st,i->id));
+							//setEdgeMess(st,i->id,1+getTuss(st,i->id));
 							//changeEdge[make_pair(min(st,i->id),max(st,i->id))] += 1;
 							cntEdge.insert(make_pair(min(st,i->id),max(st,i->id)));
 							//cout<<"ADD:"<<min(st,i->id)<<" "<<max(st,i->id)<<"  "<<changeEdge[make_pair(min(st,i->id),max(st,i->id))]<<endl;
@@ -797,7 +826,7 @@ void Graph::upAdjust(int st, int ed){
 							changeNodes.insert(i->id);
 						}
 						if(j->tuss < t && !inCntEdge(ed,j->id)){
-							//setTuss(ed,j->id,1+getTuss(ed,j->id));
+							//setEdgeMess(ed,j->id,1+getTuss(ed,j->id));
 							//changeEdge[make_pair(min(ed,i->id),max(ed,i->id))] += 1 ;
 							cntEdge.insert(make_pair(min(ed,i->id),max(ed,i->id)));
 							//cout<<"ADD:"<<min(ed,i->id)<<" "<<max(ed,i->id)<<"  "<<changeEdge[make_pair(min(ed,i->id),max(ed,i->id))]<<endl;
@@ -826,11 +855,11 @@ void Graph::dynamicInsert(int stId,int edId){
 	int sp = computeSup(stId,edId);
 	nodeList[stId].firstNei->sup = sp;
 	nodeList[edId].firstNei->sup = sp;
-	setTuss( stId,edId,sp+2);
+	setEdgeMess( stId,edId,sp+2,1);
 	boundData bd = bound(stId,edId);
 	//cout<<"Dot:"<<s<<" "<<e<<" ->bound:"<<bd.up_bound<<" sup+2:" <<sp+2<<endl;
 
-	setTuss( stId,edId,min(sp+2,bd.up_bound));
+	setEdgeMess( stId,edId,min(sp+2,bd.up_bound),1);
 //cout<<nodeList[stId].id <<" "<<nodeList[edId].id<<" Up_bound:"<<min(sp+2,bd.up_bound)<<endl;
     upAdjust( stId, edId);
 	//cout<<"Adjust finished"<<endl;
@@ -851,7 +880,7 @@ void Graph::dynamicInsert(int stId,int edId){
 		int newTuss = min(a,b);
 		//cout<<a<<" "<<b<<endl;
 //cout<<nodeList[(*it).first].id<<" "<<nodeList[(*it).second].id<<" newTruss:"<< newTuss<<"  getTruss and sup:"<<getTuss((*it).first,(*it).second)<<endl;
-		setTuss((*it).first, (*it).second,newTuss);
+		setEdgeMess((*it).first, (*it).second,newTuss,1);
 		//changeEdge[*it] = 0;
 		visit[*it] = 0;
 	}
@@ -907,7 +936,7 @@ void Graph::dynamicDelete(int stId,int edId){
 		int b = getEdgeMess((*it).first,(*it).second,1);
 		int newTuss = min(a,b);
 		//cout<<(*it).first<<" "<<(*it).second<<" "<< newTuss<<" "<<a<<" "<<b<<endl;
-		setTuss((*it).first, (*it).second,newTuss);
+		setEdgeMess((*it).first, (*it).second,newTuss,1);
 		visit[*it] = 0;
 	}
 	cntEdge.clear();
@@ -973,6 +1002,7 @@ void Graph::supInitDelete(int stId,int edId){
     int ed = max(stId,edId);
     deleteEdge(st,ed);
 }
+
 int Graph::computeLB(int st,int ed){
     vector<int > v;
     NeiNode *i = nodeList[st].firstNei;
@@ -1010,20 +1040,23 @@ int Graph::computeLB(int st,int ed){
 		}
 		maxTuss --;
 	}
+    //cout<<LB<<endl;
     return LB;
 }
 
-void Graph::centerAdjust(int st,int ed,int UB){
-    set<edge,cmp> PES;
-    NeiNode* i = nodeList[st].firstNei;
+int Graph::computeUB(int st,int ed){
+    vector<int > v;
+    NeiNode *i = nodeList[st].firstNei;
 	while(i){
 		if(i->valid && i->id != ed){
 			NeiNode *j = nodeList[ed].firstNei;
 			while(j){
 				if(j->valid && j->id!= st){
 					if(j->id == i->id) {
-						if(i->tuss<UB) PES.insert(edge(min(i->id,st),max(i->id,st),i->tuss));
-                        if(i->tuss<UB) PES.insert(edge(min(i->id,ed),max(i->id,ed),i->tuss));
+						int a = i->tuss;// getTuss(i->id,st);
+						int b = j->tuss;//getTuss(j->id,ed);
+						int d = min(a,b);
+						v.push_back(d);
 					}
 				}
 				j = j->next;
@@ -1031,9 +1064,36 @@ void Graph::centerAdjust(int st,int ed,int UB){
 		}
 		i = i->next;
 	}
+    //for(int i=0;i<v.size();i++) cout<<v[i]<<" ";
+    //cout<<endl;
+    int maxTuss = v.size()+2;
+    int UB = maxTuss;
+	while(maxTuss>2){
+		int cnt = 0;
+		for(int q = 0;q<v.size();q++){
+	 //       cout<<newTuss[q]<<" ";
+			if(v[q]>=maxTuss-1)
+				cnt++;
+		}
+		if(cnt>=maxTuss-2) {
+			UB = maxTuss;
+			break;
+		}
+		maxTuss --;
+	}
+    //cout<<UB<<endl;
+    return UB;
+}
+
+void Graph::centerAdjust(set<edge,cmp> PES){
+    set<pair<int,int> > resSet;
 
     set<edge >::iterator iter;
     for(iter = PES.begin();iter!=PES.end();iter++){
+        //cout<<(*iter).st<<" "<<(*iter).ed<<endl;
+    }
+    for(iter = PES.begin();iter!=PES.end();iter++){
+        while(!Stack.empty()) Stack.pop();
         pair<int,int> e_root = make_pair((*iter).st,(*iter).ed);
         int rootTruss = getEdgeMess(e_root.first,e_root.second,1);
         Sset[e_root] = getEdgeMess(e_root.first,e_root.second,4);
@@ -1042,10 +1102,13 @@ void Graph::centerAdjust(int st,int ed,int UB){
         while(!(Stack.empty())){
             pair<int,int> now_e = Stack.top();
             Stack.pop();
+            //cout<<Sset[now_e]<<" "<<rootTruss-2<<endl;
             if(Sset[now_e]>rootTruss-2){
+                //cout<<"Change:"<<now_e.first<<" "<<now_e.second<<endl;
+                resSet.insert(now_e);
                 int a = now_e.first;
                 int b = now_e.second;
-                i = nodeList[a].firstNei;
+                NeiNode *i = nodeList[a].firstNei;
                 while(i){
                     if(i->valid && i->id != b){
                         NeiNode *j = nodeList[b].firstNei;
@@ -1053,17 +1116,25 @@ void Graph::centerAdjust(int st,int ed,int UB){
                             if(j->valid && j->id!= a){
                                 if(j->id == i->id) {
                                     if(min(i->tuss,j->tuss)>= rootTruss){
-                                        pair<int,int> new_e = make_pair(min(i->id,a),max(i->id,a));
-                                        if(i->tuss == rootTruss && i->SS > rootTruss-2 && Vset[new_e]==0 ){
-                                            Stack.push(new_e);
-                                            Vset[new_e] = 1;
-                                            Sset[new_e] = Sset[new_e] + getEdgeMess(new_e.first,new_e.second,4);
+                                        pair<int,int> new_e_1 = make_pair(min(i->id,a),max(i->id,a));
+                                        if(i->tuss == rootTruss && i->SS > rootTruss-2 && Vset[new_e_1]==0 && j->tuss > rootTruss ){
+                                            Stack.push(new_e_1);
+                                            Vset[new_e_1] = 1;
+                                            Sset[new_e_1] = Sset[new_e_1] + getEdgeMess(new_e_1.first,new_e_1.second,4);
                                         }
-                                        new_e = make_pair(min(i->id,b),max(i->id,b));
-                                        if(j->tuss == rootTruss && j->SS > rootTruss-2 && Vset[new_e]==0 ){
-                                            Stack.push(new_e);
-                                            Vset[new_e] = 1;
-                                            Sset[new_e] = Sset[new_e] + getEdgeMess(new_e.first,new_e.second,4);
+                                        pair<int,int> new_e_2 = make_pair(min(i->id,b),max(i->id,b));
+                                        if(j->tuss == rootTruss && j->SS > rootTruss-2 && Vset[new_e_2]==0 && i->tuss > rootTruss){
+                                            Stack.push(new_e_2);
+                                            Vset[new_e_2] = 1;
+                                            Sset[new_e_2] = Sset[new_e_2] + getEdgeMess(new_e_2.first,new_e_2.second,4);
+                                        }
+                                        if(j->tuss == rootTruss &&i->tuss == rootTruss &&i->SS > rootTruss-2&&j->SS > rootTruss-2&& Vset[new_e_2]==0&& Vset[new_e_1]==0){
+                                            Stack.push(new_e_1);
+                                            Vset[new_e_1] = 1;
+                                            Sset[new_e_1] = Sset[new_e_1] + getEdgeMess(new_e_1.first,new_e_1.second,4);
+                                            Stack.push(new_e_2);
+                                            Vset[new_e_2] = 1;
+                                            Sset[new_e_2] = Sset[new_e_2] + getEdgeMess(new_e_2.first,new_e_2.second,4);
                                         }
                                     }
                                 }
@@ -1074,6 +1145,7 @@ void Graph::centerAdjust(int st,int ed,int UB){
                     i = i->next;
                 }
             }else {
+                //cout<<"Qu zhu:"<<now_e.first<<" "<<now_e.second<<endl;
                 if(Xset[now_e] == 0) {
                     Xset[now_e] = 1;
                     Eliminate(now_e,rootTruss);
@@ -1082,17 +1154,51 @@ void Graph::centerAdjust(int st,int ed,int UB){
             
         }
     }
+    /*
+    set<pair<int,int> >::iterator it; 
+    for(it = resSet.begin();it!=resSet.end();it++){
+        cout<<nodeList[(*it).first].id<<" "<<nodeList[(*it).second].id<<" "<<getEdgeMess( (*it).first,(*it).second,1)<<endl;
+        setEdgeMess( (*it).first,(*it).second,getEdgeMess( (*it).first,(*it).second,1)+1,1);
+    }
+    */
+    
     map<pair<int,int>,int >::iterator vit;
     for(vit = Vset.begin();vit!=Vset.end();vit++){
+        //cout<<(*vit).first.first<<" "<<(*vit).first.second<<" "<<(*vit).second<<" "<<Xset[(*vit).first]<<endl;
         if((*vit).second == 1 && Xset[(*vit).first]==0){
-            //cout<<nodeList[(*vit).first.first].id<<" "<<nodeList[(*vit).first.second].id<<endl;
-            setTuss( (*vit).first.first,(*vit).first.second,getEdgeMess( (*vit).first.first,(*vit).first.second,1)+1);
+            cout<<nodeList[(*vit).first.first].id<<" "<<nodeList[(*vit).first.second].id<<endl;
+            setEdgeMess( (*vit).first.first,(*vit).first.second,getEdgeMess( (*vit).first.first,(*vit).first.second,1)+1,1);
         }
     }
+    
 }
 
-void Graph::centerInsert(int stId,int edId){
-    enableAllNodes();
+bool Graph::exist_edge(int st,int ed){
+    if(Find(st)<0||Find(ed)<0) return false ;
+    int findSt = Find(st);
+    int findEd = Find(ed);
+    NeiNode *p = nodeList[findSt].firstNei;
+    while(p){
+        if(findEd == p->id && p->valid) return true;
+        p = p->next;
+    }
+    return false;
+}
+
+void Graph::centerInsert(int stId,int edId,int initModle){
+    cout<<stId<<" "<<edId<<endl;
+    if(exist_edge(stId,edId)){
+        cout<< "Repeated edge."<<endl;
+        return;
+    }
+
+    //Vset.erase(Vset.begin(),Vset.end());
+    //Xset.erase(Xset.begin(),Xset.end());
+    //Sset.erase(Sset.begin(),Sset.end());
+    Vset.clear();
+    Xset.clear();
+    Sset.clear();
+
     addEdge(stId,edId);
     stId = Find(stId);
 	edId = Find(edId);
@@ -1101,31 +1207,53 @@ void Graph::centerInsert(int stId,int edId){
     int ed = max(stId,edId);
     //startTime = clock();
     int LB = computeLB(st,ed);
+    //int UB = computeUB(st,ed);
     int UB=0;
     int myTruss = LB;
-    //for(int i=0;i<v.size();i++) cout<<v[i]<<" ";
-    //cout<<endl<<v.size()<<endl;
-    setTuss(st,ed,LB);
+
+    setEdgeMess(st,ed,LB,1);
+    int mySS,myCS;
     initSuperSup();
     initConstrainSup();
-    int mySS = getEdgeMess(st,ed,3);
-    int myCS = getEdgeMess(st,ed,4);
+    mySS = getEdgeMess(st,ed,3);
+    myCS = getEdgeMess(st,ed,4);
+
     //cout<<">>"<<mySS<<" "<<myCS<<endl;
     if(myCS > myTruss-2) UB = LB+1;
     else UB = LB;
     //cout<<LB<<" "<<UB<<endl;
+    //setEdgeMess(st,ed,UB,1);
 
     startTime = clock();
-    centerAdjust(st,ed,UB);
+    
+    set<edge,cmp> PES;
+    NeiNode* i = nodeList[st].firstNei;
+	while(i){
+		if(i->valid && i->id != ed){
+			NeiNode *j = nodeList[ed].firstNei;
+			while(j){
+				if(j->valid && j->id!= st){
+					if(j->id == i->id) {
+						if(i->tuss<UB) PES.insert(edge(min(i->id,st),max(i->id,st),i->tuss));
+                        if(j->tuss<UB) PES.insert(edge(min(j->id,ed),max(j->id,ed),j->tuss));
+					}
+				}
+				j = j->next;
+			}
+		}
+		i = i->next;
+	}
+    //PES.insert(edge(min(ed,st),max(ed,st),getEdgeMess(min(ed,st),max(ed,st),1)));
+
+    centerAdjust(PES);
     endTime = clock();
     double time = 1000.0*(endTime - startTime);
     log(1,1,time);
-    cout<<"Time of insert One edge:"<<time<<endl;
+    //cout<<"Time of insert One edge:"<<time<<endl;
 }
 
 void Graph::Eliminate(pair<int,int> e,int t){
     Xset[e] = 1;
-    Vset[e] = 1;
     int k = t-2;
     int a = e.first;
     int b = e.second;
@@ -1179,27 +1307,170 @@ bool LessSort (edge a,edge b) {
     return a.ed<b.ed;
 }  
 
+
+bool Graph::noCross(vector<edge> eset,int st,int ed){
+    st = Find(st);
+    ed = Find(ed);
+    for(int k=0;k<eset.size();k++){
+        map<pair<int,int>,int> a;
+        NeiNode* i = nodeList[st].firstNei;
+        while(i){
+            if(i->valid && i->id != ed){
+                a[make_pair(min(i->id,st),max(i->id,st))] = 1;
+            }
+            i = i->next;
+        }
+        i = nodeList[ed].firstNei;
+        while(i){
+            if(i->valid && i->id != st){
+                a[make_pair(min(i->id,ed),max(i->id,ed))] = 1;
+            }
+            i = i->next;
+        }
+        int st2 = Find(eset[k].st);
+        int ed2 = Find(eset[k].ed);
+        map<pair<int,int>,int> b;
+        i = nodeList[st2].firstNei;
+        while(i){
+            if(i->valid && i->id != ed2){
+                if(a[make_pair(min(i->id,st2),max(i->id,st2))] == 1) return 0; 
+            }
+            i = i->next;
+        }
+        i = nodeList[ed2].firstNei;
+        while(i){
+            if(i->valid && i->id != st2){
+                if(a[make_pair(min(i->id,ed2),max(i->id,ed2))] == 1) return 0;
+            }
+            i = i->next;
+        }
+    }
+    return 1;
+}
+
 void Graph::centerMultInsert(vector<int> stIds,vector<int > edIds){
-    initSuperSup();
-    initConstrainSup();
+    //initSuperSup();
+    //initConstrainSup();
     double maxTime;
     vector<edge> insertEdge;
     for(int i=0;i<stIds.size();i++){
-        addEdge(stIds[i],edIds[i]);
-        int st = Find(stIds[i]);
-        int ed = Find(edIds[i]);
+        MapToIndex(stIds[i]);
+        MapToIndex(edIds[i]);
+        edge tmp(stIds[i],edIds[i],2);
+        insertEdge.push_back(tmp);
     }
+    int cntStep = 0;
+    int maxNumberOneCycle = 0;
+    while(!insertEdge.empty()){
+        initSuperSup();
+        initConstrainSup();
+
+        startTime = clock();
+        cout<<"Step "<<cntStep++<<"->"<<endl;
+       // set<edge,cmp>::iterator iter;
+        int cntNuumberOnecycle = 0;
+        vector<edge > nowInsertEdgeSet;
+        addEdge(insertEdge[0].st,insertEdge[0].ed);
+        int a = Find(insertEdge[0].st);
+        int b = Find(insertEdge[0].ed);
+        int st = min(a,b);
+        int ed = max(a,b);
+        int LB = computeLB(st,ed);
+        setEdgeMess(st,ed,LB,1);
+        insertEdge[0].st2 = LB;
+        nowInsertEdgeSet.push_back(insertEdge[0]);
+
+        insertEdge.erase(insertEdge.begin()+0);
+        for(int k=0;k<insertEdge.size();k++){
+            if(noCross(nowInsertEdgeSet,insertEdge[k].st,insertEdge[k].ed)) {
+                addEdge(insertEdge[k].st,insertEdge[k].ed);
+                int a = Find(insertEdge[k].st);
+                int b = Find(insertEdge[k].ed);
+                int st = min(a,b);
+                int ed = max(a,b);
+                int LB = computeLB(st,ed);
+                setEdgeMess(st,ed,LB,1);
+                insertEdge[k].st2 = LB;
+
+                nowInsertEdgeSet.push_back(insertEdge[k]);
+                cout<<"fuck:"<<k<<" "<<insertEdge.size()<<" "<<insertEdge[k].st<<" "<<insertEdge[k].ed<<" "<<a<<" "<<b<<endl; 
+                insertEdge.erase(insertEdge.begin()+k);
+                k--;
+                cntNuumberOnecycle ++;
+                
+            }else continue;
+        }
+        initSuperSup();
+        initConstrainSup();
+        startTime = clock();
+        set<edge,cmp> PES;
+        for(int k=0;k<nowInsertEdgeSet.size();k++){
+            int a = Find(nowInsertEdgeSet[k].st);
+            int b = Find(nowInsertEdgeSet[k].ed);
+            cout<<nowInsertEdgeSet[k].st<<" "<<nowInsertEdgeSet[k].ed<<" "<<a<<" "<<b<<endl;
+            int st = min(a,b);
+            int ed = max(a,b);
+            int LB = nowInsertEdgeSet[k].st2 ;
+            //int UB = computeUB(st,ed);
+            int UB=0;
+            int mySS,myCS;
+            mySS = getEdgeMess(st,ed,3);
+            myCS = getEdgeMess(st,ed,4);
+            if(myCS > LB-2) UB = LB+1;
+            else UB = LB;
+
+            setEdgeMess(st,ed,LB,1);
+            if(LB==UB && UB == 2)continue;
+            
+            NeiNode* i = nodeList[st].firstNei;
+            while(i){
+                if(i->valid && i->id != ed){
+                    NeiNode *j = nodeList[ed].firstNei;
+                    while(j){
+                        if(j->valid && j->id!= st){
+                            if(j->id == i->id) {
+                                if(i->tuss<UB) {
+                                    PES.insert(edge(min(i->id,st),max(i->id,st),i->tuss));
+                                    //cout<<"Insert CS:"<<getEdgeMess(min(i->id,st),max(i->id,st),4)<<endl;
+                                }
+                                if(j->tuss<UB) {
+                                    PES.insert(edge(min(j->id,ed),max(j->id,ed),j->tuss));
+                                    //cout<<"Insert CS:"<<getEdgeMess(min(j->id,ed),max(j->id,ed),4)<<endl;;
+                                }
+                            }
+                        }
+                        j = j->next;
+                    }
+                }
+                i = i->next;
+            }
+            //PES.insert(edge(min(ed,st),max(ed,st),getEdgeMess(min(ed,st),max(ed,st),1)));
+        }
+
+        Vset.clear();
+        Xset.clear();
+        Sset.clear();
+        centerAdjust(PES);
+        
+        endTime = clock();
+        maxTime = max(maxTime,1000.0*(endTime - startTime));
+        maxNumberOneCycle = max(maxNumberOneCycle,cntNuumberOnecycle);
+    }
+    
+}
+
+
+/*
     for(int i=0;i<stIds.size();i++){
         int a = Find(stIds[i]);
         int b = Find(edIds[i]);
         int st = min(a,b);
         int ed = max(a,b);
-        
         int LB = computeLB(st,ed);
         int UB=0;
         //for(int i=0;i<v.size();i++) cout<<v[i]<<" ";
         //cout<<endl<<v.size()<<endl;
-        setTuss(st,ed,LB);
+        setEdgeMess(st,ed,LB,1);
         
         int mySS = computeSuperSup(st,ed,LB); 
         int myCS = computeConstrainSup(st,ed,LB);
@@ -1225,26 +1496,48 @@ void Graph::centerMultInsert(vector<int> stIds,vector<int > edIds){
             }
             ii = ii->next;
         }
-        edge tmp(small,UB,0);
-        tmp.st2 = st;
-        tmp.ed2 = ed;
+        edge tmp(small,UB-1,0);
+        tmp.st2 = stIds[i];
+        tmp.ed2 = edIds[i];
         insertEdge.push_back(tmp);
         //cout<<st<<" + "<<ed<<" UB:"<<UB<<" LB:"<<LB<<endl;
     }
+    
     sort(insertEdge.begin(),insertEdge.end(),LessSort);
     int cntStep = 0;
     int maxNumberOneCycle = 0;
+    
     while(!insertEdge.empty()){
         startTime = clock();
-        //cout<<"Step "<<cntStep++<<" :"<<endl;
+        cout<<"Step "<<cntStep++<<" :"<<endl;
        // set<edge,cmp>::iterator iter;
         int lastEnd = -1;
         int cntNuumberOnecycle = 0;
         for(int k=0;k<insertEdge.size();k++){
             if(lastEnd<insertEdge[k].st) {
                 lastEnd = insertEdge[k].ed;
-                //cout<<"Insert:"<<insertEdge[k].st2<<" "<<insertEdge[k].ed2<<endl;
-                centerAdjust(insertEdge[k].st2,insertEdge[k].ed2,insertEdge[k].ed);
+                addEdge(insertEdge[k].st2,insertEdge[k].ed2);
+            }else continue;
+        }
+        initSuperSup();
+        initSuperSup();
+        for(int k=0;k<insertEdge.size();k++){
+            if(lastEnd<insertEdge[k].st) {
+                lastEnd = insertEdge[k].ed;
+                cout<<"Insert:"<<insertEdge[k].st2<<" "<<insertEdge[k].ed2<<endl;
+                int st = Find(insertEdge[k].st2);
+                int ed = Find(insertEdge[k].ed2);
+                int LB = computeLB(st,ed);
+                int UB=0;
+                setEdgeMess(st,ed,LB,1);
+                int mySS,myCS;
+                mySS = getEdgeMess(st,ed,3);
+                myCS = getEdgeMess(st,ed,4);
+                if(myCS > LB-2) UB = LB+1;
+                else UB = LB;
+                centerAdjust(PES);
+
+                //centerInsert(insertEdge[k].st2,insertEdge[k].ed2,1);
                 insertEdge.erase(insertEdge.begin()+k);
                 k--;
                 cntNuumberOnecycle ++;
@@ -1258,4 +1551,4 @@ void Graph::centerMultInsert(vector<int> stIds,vector<int > edIds){
     log(cntStep,maxNumberOneCycle,maxTime);
     cout<<"Number of cycles:"<<cntStep<<endl;
     cout<<"Time of longest cycle:"<<maxTime<<endl;
-}
+*/

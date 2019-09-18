@@ -96,9 +96,10 @@ class Graph{
 		void dynamicInsert(int stId,int edId);
 		void dynamicDelete(int stId,int edId);
         void supInitDelete(int stId,int edId);
-        void centerInsert(int stId,int edId);
+        void centerInsert(int stId,int edId,int model);
         void centerMultInsert(vector<int> stIds,vector<int > edIds);
 		void cover();//用sup的值来覆盖truss
+        void enableAllNodes();
         void initSuperSup();
         void initConstrainSup();
 		int changedEdgeNum = 0;
@@ -163,7 +164,7 @@ class Graph{
         clock_t startTime;
         clock_t endTime;
 		
-        void setTuss(int stId,int edId,int k);
+        void setEdgeMess(int stId,int edId,int k,int initModle);
         void remEdge(int stId,int edId);
         void PrRemEdge(int stId,int edId);
         double computePrSup(int st,int ed,double p);
@@ -179,9 +180,12 @@ class Graph{
         int computeSuperSup(int st,int ed,int truss);
         int computeConstrainSup(int st,int ed,int truss);
         void Eliminate(pair<int,int> e,int t);
-        void enableAllNodes();
         int computeLB(int st,int ed);
-        void centerAdjust(int st,int ed,int UB);
+        int computeUB(int st,int ed);
+        void centerAdjust(set<edge,cmp> PES);
+        int MapToIndex(int id);
+        bool exist_edge(int st,int ed);
+        bool noCross(vector<edge > eset,int st,int ed);
 
 };
 
