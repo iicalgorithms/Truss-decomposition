@@ -9,7 +9,7 @@
 Graph::Graph(){}
 
 void Graph::buildGraph(int edge_num,int node_num){
-    edgeNum = edge_num;
+    edgeNum = 0;
     nodeNum = node_num;
     nodeList = new GraphNode[node_num+10]();
     bin = new vector<pair<int,int> >[node_num-1](); 
@@ -56,6 +56,8 @@ void Graph::addEdge(int stId,int edId){
     nodeList[findEd].firstNei = e;
     nodeList[findEd].degree ++;
 	visit[make_pair(min(findSt,findEd),max(findSt,findEd))] = 0;
+
+    edgeNum++;
 }
 
 void Graph::addEdge(int stId,int edId,double pr){
@@ -1166,7 +1168,7 @@ void Graph::centerAdjust(set<edge,cmp> PES){
     for(vit = Vset.begin();vit!=Vset.end();vit++){
         //cout<<(*vit).first.first<<" "<<(*vit).first.second<<" "<<(*vit).second<<" "<<Xset[(*vit).first]<<endl;
         if((*vit).second == 1 && Xset[(*vit).first]==0){
-            cout<<nodeList[(*vit).first.first].id<<" "<<nodeList[(*vit).first.second].id<<endl;
+            //cout<<nodeList[(*vit).first.first].id<<" "<<nodeList[(*vit).first.second].id<<endl;
             setEdgeMess( (*vit).first.first,(*vit).first.second,getEdgeMess( (*vit).first.first,(*vit).first.second,1)+1,1);
         }
     }
@@ -1186,18 +1188,12 @@ bool Graph::exist_edge(int st,int ed){
 }
 
 void Graph::centerInsert(int stId,int edId,int initModle){
-    cout<<stId<<" "<<edId<<endl;
+    //cout<<"Insert>>>>>>"<<endl;
+    //cout<<stId<<" "<<edId<<endl;
     if(exist_edge(stId,edId)){
         cout<< "Repeated edge."<<endl;
         return;
     }
-
-    //Vset.erase(Vset.begin(),Vset.end());
-    //Xset.erase(Xset.begin(),Xset.end());
-    //Sset.erase(Sset.begin(),Sset.end());
-    Vset.clear();
-    Xset.clear();
-    Sset.clear();
 
     addEdge(stId,edId);
     stId = Find(stId);
@@ -1223,6 +1219,7 @@ void Graph::centerInsert(int stId,int edId,int initModle){
     else UB = LB;
     //cout<<LB<<" "<<UB<<endl;
     //setEdgeMess(st,ed,UB,1);
+    //UB = computeUB(st,ed);
 
     startTime = clock();
     
@@ -1244,11 +1241,19 @@ void Graph::centerInsert(int stId,int edId,int initModle){
 		i = i->next;
 	}
     //PES.insert(edge(min(ed,st),max(ed,st),getEdgeMess(min(ed,st),max(ed,st),1)));
+    
+    //Vset.erase(Vset.begin(),Vset.end());
+    //Xset.erase(Xset.begin(),Xset.end());
+    //Sset.erase(Sset.begin(),Sset.end());
+    Vset.clear();
+    Xset.clear();
+    Sset.clear();
 
     centerAdjust(PES);
     endTime = clock();
     double time = 1000.0*(endTime - startTime);
     log(1,1,time);
+    
     //cout<<"Time of insert One edge:"<<time<<endl;
 }
 
@@ -1393,7 +1398,7 @@ void Graph::centerMultInsert(vector<int> stIds,vector<int > edIds){
                 insertEdge[k].st2 = LB;
 
                 nowInsertEdgeSet.push_back(insertEdge[k]);
-                cout<<"fuck:"<<k<<" "<<insertEdge.size()<<" "<<insertEdge[k].st<<" "<<insertEdge[k].ed<<" "<<a<<" "<<b<<endl; 
+                //cout<<"fuck:"<<k<<" "<<insertEdge.size()<<" "<<insertEdge[k].st<<" "<<insertEdge[k].ed<<" "<<a<<" "<<b<<endl; 
                 insertEdge.erase(insertEdge.begin()+k);
                 k--;
                 cntNuumberOnecycle ++;
@@ -1407,7 +1412,7 @@ void Graph::centerMultInsert(vector<int> stIds,vector<int > edIds){
         for(int k=0;k<nowInsertEdgeSet.size();k++){
             int a = Find(nowInsertEdgeSet[k].st);
             int b = Find(nowInsertEdgeSet[k].ed);
-            cout<<nowInsertEdgeSet[k].st<<" "<<nowInsertEdgeSet[k].ed<<" "<<a<<" "<<b<<endl;
+            //cout<<nowInsertEdgeSet[k].st<<" "<<nowInsertEdgeSet[k].ed<<" "<<a<<" "<<b<<endl;
             int st = min(a,b);
             int ed = max(a,b);
             int LB = nowInsertEdgeSet[k].st2 ;

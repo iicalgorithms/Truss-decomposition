@@ -6574,3 +6574,669 @@ Max inserted edges number of all cycles: 1
 Time: 19000.000000 mm
 --------------------------------
 
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 54000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 92000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 52000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 89000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 18000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 102000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 54000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 94000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 2000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 2000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 101000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 19000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 20000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 19000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 3000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 19000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 18000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 19000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 20000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 18000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 1000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 2000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 4000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 19000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 1 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 17000.000000 mm
+--------------------------------
+
+Parameter Message : CA-GrQc.txt 1 0 6 0 
+Number of cycles: 1 
+Max inserted edges number of all cycles: 1 
+Time: 0.000000 mm
+--------------------------------
+
