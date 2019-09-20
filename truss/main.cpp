@@ -13,6 +13,8 @@
 #define random(x) rand()%x;
 using namespace std;
 
+int seed = 100;
+
 Graph G;
 int node_num ,edge_num ;//边数，点数
 
@@ -26,6 +28,7 @@ vector<int> v;//保存抽样出的数据的下标
 vector<int > stId;//要插入/删除边的起点
 vector<int > edId;//要插入/删除边的终点
 set<pair<int,int> > clearSet;
+set<int > clearNodeSet;
 
 char * filename ;//文件路径
 int method = -1;//求解方法 0-贪心 1-分布式
@@ -70,30 +73,30 @@ int main(int argc,char * argv[]){
 	write = argv[6][0];
 	G.recoard(filename,method,graphType,computeType,number);
 
-    ifstream in(filename);
-    if(!in.is_open()) cout<<"fail to open file!\n"<<endl;
+	ifstream in(filename);
+	if(!in.is_open()) cout<<"fail to open file!\n"<<endl;
 
-    if(argv[2][0] == '2'|| argv[2][0] == '3'){//概率图
-        getline(in,temp);
-        istringstream strs(temp);
-        int node_num;
-        int node;
-        strs>>node_num>>node;
-        G.buildGraph(0,node_num);
-    }
+	if(argv[2][0] == '2'|| argv[2][0] == '3'){//概率图
+		getline(in,temp);
+		istringstream strs(temp);
+		int node_num;
+		int node;
+		strs>>node_num>>node;
+		G.buildGraph(0,node_num);
+	}
 	
 	//读入文件头，确定点数和边数，建图
 	while(getline(in,temp)){
-        istringstream str(temp);
-        if(temp[0] == '#'){
-            if(temp[2]=='N'&&temp[3]=='o'&&temp[4]=='d'){
-                string t1,t2,t3;
-                str>>t1>>t2>>node_num>>t3>>edge_num;
-                //cout<<temp<<endl;
-                //cout<<t1<<" "<<t2<<" "<<node_num<<" "<<t3<<" "<<edge_num<<"  ss"<<endl;
-            }else continue;
-        }else break;
-    }
+		istringstream str(temp);
+		if(temp[0] == '#'){
+			if(temp[2]=='N'&&temp[3]=='o'&&temp[4]=='d'){
+				string t1,t2,t3;
+				str>>t1>>t2>>node_num>>t3>>edge_num;
+				//cout<<temp<<endl;
+				//cout<<t1<<" "<<t2<<" "<<node_num<<" "<<t3<<" "<<edge_num<<"  ss"<<endl;
+			}else continue;
+		}else break;
+	}
 	do{
 		istringstream str(temp);
 		if(temp[0] != '#'){
@@ -102,35 +105,110 @@ int main(int argc,char * argv[]){
 			int a = min(st,ed);
 			int b = max(st,ed);
 			clearSet.insert(make_pair(a,b));
+			clearNodeSet.insert(a);
+			clearNodeSet.insert(b);
 			//cout<<a<<" "<<b<<" "<<clearSet.size()<<endl;
 		}
-    }while(getline(in,temp));
+	}while(getline(in,temp));
+
 	edge_num = clearSet.size();
 	G.buildGraph(edge_num,node_num);
-
 	
 	changeNum = number;
 	changeNum = Pow(changeNum);
-	srand(100);
+	int RandomUpBound = 0;
+	if(graphType == 3) RandomUpBound = node_num;
+	else RandomUpBound = edge_num;
+
+	srand(seed);
 	if(graphType == 0 ){
-		for(int i=0;i<edge_num;i++) shhuffle_rdm.push_back(i);
+		for(int i=0;i<RandomUpBound;i++) shhuffle_rdm.push_back(i);
 		random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
 		for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
 		if(!v.empty()) sort(v.begin(),v.end());
 	}else if(graphType == 1){
 		for(int i=0;i<changeNum;i++){
-			v.push_back(edge_num-changeNum+i);
+			v.push_back(RandomUpBound-changeNum+i);
 		}
 	}else if(graphType == 2){
-		v.push_back(rand()%edge_num);
+		v.push_back(rand()%RandomUpBound);
 	}
 	
 	//for (int i = 0; i < v.size(); i++) 		cout<<v[i]<<endl;
 
-	int rNum = 0;
-	int pNum = 0;
-    set<pair<int,int> >::iterator  iter;
-	for(iter = clearSet.begin();iter!=clearSet.end();iter++){
+	if(graphType == 3) {
+		set<int>::iterator  it;
+		int vcnt = 0;
+		int cnt = 0;
+		for(it = clearNodeSet.begin();it!=clearNodeSet.end();it++){
+			if (v[vcnt]==cnt)
+			{
+				v[vcnt++] = (*it);
+			}
+			cnt++;
+		}
+		vector<set<pair<int,int> > > edgeFromNodeToBeInserted;
+		for(int i=0;i<v.size();i++){
+			set<pair<int,int> > tempset;
+			edgeFromNodeToBeInserted.push_back(tempset);
+		}
+		set<pair<int,int> >::iterator  iter = clearSet.begin();
+		
+		while(iter!=clearSet.end()){
+			int st = (*iter).first;
+			int ed = (*iter).second;
+			int flg = 0;
+			for(int i=0;i<v.size();i++){
+				if(st == v[i]||ed == v[i]){
+					edgeFromNodeToBeInserted[i].insert(make_pair((*iter).first,(*iter).second));
+					flg = 1;
+				}
+			}
+			if(flg) {
+				set<pair<int,int> >::iterator  tempIt = iter;
+				iter++;
+				clearSet.erase(iter);
+			}else iter++;
+		}
+
+		for(iter = clearSet.begin();iter!=clearSet.end();iter++){
+			int st = (*iter).first;
+			int ed = (*iter).second;
+			G.addEdge(st,ed);
+		}
+
+		if(method == 0){
+			G.initSup();
+			G.cover();
+			G.greed();			
+		}else if(method == 1){
+			G.initSup();
+			G.cover();
+			G.distribute();
+		}else cout<<"Wrong modle."<<endl;
+
+		G.enableAllNodes();
+
+		switch (computeType)
+		{
+		case 0:
+			G.SingleNodeInsert(edgeFromNodeToBeInserted[0],v[0]);
+			break;
+		
+		case 1:
+			G.MultNodeInsert(edgeFromNodeToBeInserted,v);
+			break;
+		
+		default:
+			break;
+		}
+
+	}else{
+
+		int rNum = 0;
+		int pNum = 0;
+		set<pair<int,int> >::iterator  iter;
+		for(iter = clearSet.begin();iter!=clearSet.end();iter++){
 			int needInsert = 0;
 			if(((computeType<=3 && computeType>=1)||computeType == 6 ||computeType == 7) && !v.empty() && v[pNum] == rNum && pNum<changeNum ){	
 				//cout<<rNum<<" "<<pNum<<endl;
@@ -138,7 +216,7 @@ int main(int argc,char * argv[]){
 				needInsert = 1;
 			}		
 			int st = (*iter).first;
-            int ed = (*iter).second;
+			int ed = (*iter).second;
 			//if(needInsert) cout<<st<<" "<<ed<<endl;;
 			if(!needInsert) {
 				G.addEdge(st,ed);
@@ -149,66 +227,68 @@ int main(int argc,char * argv[]){
 			}
 			rNum ++;
 			//cout<<rNum<<endl;
-    }
+		}
 
-	if(method == 0){
-		G.initSup();
-		G.cover();
-        G.greed();			
-	}else if(method == 1){
-		G.initSup();
-		G.cover();
-        G.distribute();
-	}else cout<<"Wrong modle."<<endl;
+		if(method == 0){
+			G.initSup();
+			G.cover();
+			G.greed();			
+		}else if(method == 1){
+			G.initSup();
+			G.cover();
+			G.distribute();
+		}else cout<<"Wrong modle."<<endl;
 
-	G.enableAllNodes();
-	G.startCntSteps = 1;
-	switch (computeType)
-	{
-	case 0:
-		break;
-	case 1:
-		for(int i=0;i<changeNum;i++){
-			G.dynamicInsert(stId[i],edId[i]);
+		G.enableAllNodes();
+		G.startCntSteps = 1;
+		switch (computeType)
+		{
+		case 0:
+			break;
+		case 1:
+			for(int i=0;i<changeNum;i++){
+				G.dynamicInsert(stId[i],edId[i]);
+				G.distribute();
+			}
+			break;
+		case 2:
+			for(int i=0;i<changeNum;i++) G.dynamicInsert(stId[i],edId[i]);
 			G.distribute();
-		}
-		break;
-	case 2:
-		for(int i=0;i<changeNum;i++) G.dynamicInsert(stId[i],edId[i]);
-		G.distribute();
-		break;
-	case 3:
-		for(int i=0;i<changeNum;i++) G.addEdge(stId[i],edId[i],0);
-		G.initSup();
-		G.cover();
-		G.distribute();
-		break;
-	case 4:
-		for(int i=0;i<changeNum;i++){	
-			G.dynamicDelete(stId[i],edId[i]);
+			break;
+		case 3:
+			for(int i=0;i<changeNum;i++) G.addEdge(stId[i],edId[i],0);
+			G.initSup();
+			G.cover();
 			G.distribute();
+			break;
+		case 4:
+			for(int i=0;i<changeNum;i++){	
+				G.dynamicDelete(stId[i],edId[i]);
+				G.distribute();
+			}
+			break;
+		case 5:
+			for(int i=0;i<changeNum;i++){
+				G.supInitDelete(stId[i],edId[i]);
+			}
+			G.distribute();
+			break;
+		case 6:
+			for(int i=0;i<changeNum;i++){	
+				G.centerInsert(stId[i],edId[i],0);
+			}
+			break;
+		case 7:
+			G.centerMultInsert(stId,edId);
+			break;
+		default:
+			if(graphType!=2)	
+				cout<<"Wrong modle!"<<endl;
+			break;
 		}
-		break;
-	case 5:
-		for(int i=0;i<changeNum;i++){
-			G.supInitDelete(stId[i],edId[i]);
-		}
-		G.distribute();
-		break;
-	case 6:
-		for(int i=0;i<changeNum;i++){	
-			G.centerInsert(stId[i],edId[i],0);
-		}
-		break;
-	case 7:
-		G.centerMultInsert(stId,edId);
-		break;
-	default:
-		if(graphType!=2)	
-			cout<<"Wrong modle!"<<endl;
-		break;
+		if(computeType!=0 &&graphType!=2 &&computeType !=6 &&computeType!=7) G.outputDynamicInfo(computeType);
+
 	}
-	if(computeType!=0 &&graphType!=2 &&computeType !=6 &&computeType!=7) G.outputDynamicInfo(computeType);
     
     if(write == 'w'){
 		string str = getName(filename);

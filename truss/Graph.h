@@ -102,6 +102,8 @@ class Graph{
         void enableAllNodes();
         void initSuperSup();
         void initConstrainSup();
+        void SingleNodeInsert(set<pair<int,int> > edgs,int nodeId);
+        void MultNodeInsert(vector<set<pair<int,int> > > edgs,vector<int > nodeIds);
 		int changedEdgeNum = 0;
 		int changedNodeNum = 0;
         int totalSteps = 0;
