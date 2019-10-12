@@ -97,7 +97,9 @@ class Graph{
 		void dynamicDelete(int stId,int edId);
         void supInitDelete(int stId,int edId);
         void centerInsert(int stId,int edId,int model);
+        void centerDelete(int stId,int edId,int model);
         void centerMultInsert(vector<int> stIds,vector<int > edIds);
+        void centerMultDelete(vector<int> stIds,vector<int > edIds);
 		void cover();//用sup的值来覆盖truss
         void enableAllNodes();
         void initSuperSup();
@@ -107,6 +109,7 @@ class Graph{
 		int changedEdgeNum = 0;
 		int changedNodeNum = 0;
         int totalSteps = 0;
+        double totalTime = 0;
 		void outputDynamicInfo(int computeType){
 			cout<<"Compute mode:"<<computeType<<endl;
             cout<<"Total Affected nodes number:"<<changeNodes.size()<<endl;
@@ -123,7 +126,7 @@ class Graph{
                 fprintf(fp,"Parameter Message : %s %d %d %d %d \n", filename ,method,graphType,computeType,enumber);
                 fprintf(fp,"Number of cycles: %d \n", cycleNumber);
                 fprintf(fp,"Max inserted edges number of all cycles: %d \n", number);                
-                fprintf(fp,"Time: %f mm\n", time);                
+                fprintf(fp,"Time: %f mm\n", time / CLOCKS_PER_SEC);                
                 fprintf(fp,"--------------------------------\n\n");                
             }else cout<<"Error occurred when open the file!"<<endl;
             fclose(fp);
@@ -188,6 +191,9 @@ class Graph{
         int MapToIndex(int id);
         bool exist_edge(int st,int ed);
         bool noCross(vector<edge > eset,int st,int ed);
+        bool noNodeCorss(vector<set<pair<int,int> > > edgs,set<pair<int,int> > edg);
+        set<edge,cmp> oneNodePES(set<pair<int,int> > edgs,int nodeId);
+        void DeleteCenterAdjust(set<edge,cmp> PES);
 
 };
 

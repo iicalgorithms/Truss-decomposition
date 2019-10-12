@@ -71,6 +71,7 @@ int main(int argc,char * argv[]){
 	computeType = argv[4][0] - '0';
 	number = argv[5][0] - '0';
 	write = argv[6][0];
+	seed = atoi(argv[7]);
 	G.recoard(filename,method,graphType,computeType,number);
 
 	ifstream in(filename);
@@ -110,7 +111,7 @@ int main(int argc,char * argv[]){
 			//cout<<a<<" "<<b<<" "<<clearSet.size()<<endl;
 		}
 	}while(getline(in,temp));
-
+	
 	edge_num = clearSet.size();
 	G.buildGraph(edge_num,node_num);
 	
@@ -121,7 +122,7 @@ int main(int argc,char * argv[]){
 	else RandomUpBound = edge_num;
 
 	srand(seed);
-	if(graphType == 0 ){
+	if(graphType == 0 || graphType == 3){
 		for(int i=0;i<RandomUpBound;i++) shhuffle_rdm.push_back(i);
 		random_shuffle(shhuffle_rdm.begin(),shhuffle_rdm.end());
 		for(int i=0;i<changeNum;i++) v.push_back(shhuffle_rdm[i]);
@@ -133,7 +134,7 @@ int main(int argc,char * argv[]){
 	}else if(graphType == 2){
 		v.push_back(rand()%RandomUpBound);
 	}
-	
+
 	//for (int i = 0; i < v.size(); i++) 		cout<<v[i]<<endl;
 
 	if(graphType == 3) {
@@ -153,7 +154,7 @@ int main(int argc,char * argv[]){
 			edgeFromNodeToBeInserted.push_back(tempset);
 		}
 		set<pair<int,int> >::iterator  iter = clearSet.begin();
-		
+		//cout<<1<<endl;
 		while(iter!=clearSet.end()){
 			int st = (*iter).first;
 			int ed = (*iter).second;
@@ -162,15 +163,16 @@ int main(int argc,char * argv[]){
 				if(st == v[i]||ed == v[i]){
 					edgeFromNodeToBeInserted[i].insert(make_pair((*iter).first,(*iter).second));
 					flg = 1;
+					break;
 				}
 			}
 			if(flg) {
 				set<pair<int,int> >::iterator  tempIt = iter;
 				iter++;
-				clearSet.erase(iter);
+				clearSet.erase(tempIt);
 			}else iter++;
 		}
-
+		//cout<<2<<endl;
 		for(iter = clearSet.begin();iter!=clearSet.end();iter++){
 			int st = (*iter).first;
 			int ed = (*iter).second;
@@ -192,7 +194,10 @@ int main(int argc,char * argv[]){
 		switch (computeType)
 		{
 		case 0:
-			G.SingleNodeInsert(edgeFromNodeToBeInserted[0],v[0]);
+			for(int i=0;i<edgeFromNodeToBeInserted.size();i++){
+				G.SingleNodeInsert(edgeFromNodeToBeInserted[i],v[i]);
+			}
+			G.log(changeNum,changeNum,G.totalTime);
 			break;
 		
 		case 1:
@@ -210,18 +215,24 @@ int main(int argc,char * argv[]){
 		set<pair<int,int> >::iterator  iter;
 		for(iter = clearSet.begin();iter!=clearSet.end();iter++){
 			int needInsert = 0;
-			if(((computeType<=3 && computeType>=1)||computeType == 6 ||computeType == 7) && !v.empty() && v[pNum] == rNum && pNum<changeNum ){	
+			int needDelete = 0;
+			if(((computeType<=3 && computeType>=1)||computeType == 6 ||computeType == 7||computeType ==8 || computeType ==9) && !v.empty() && v[pNum] == rNum && pNum<changeNum ){	
 				//cout<<rNum<<" "<<pNum<<endl;
 				pNum++;
 				needInsert = 1;
+				if(computeType ==8 || computeType ==9){
+					needDelete = 1;
+					needInsert = 0;
+				}
 			}		
 			int st = (*iter).first;
 			int ed = (*iter).second;
 			//if(needInsert) cout<<st<<" "<<ed<<endl;;
+			
 			if(!needInsert) {
 				G.addEdge(st,ed);
 			}
-			if(needInsert||computeType==4||computeType==5){//如果需要插入或者删除
+			if(needInsert||computeType==4||computeType==5||needDelete){//如果需要插入或者删除
 				stId.push_back(min(st,ed));
 				edId.push_back(max(st,ed));				
 			}
@@ -277,16 +288,27 @@ int main(int argc,char * argv[]){
 			for(int i=0;i<changeNum;i++){	
 				G.centerInsert(stId[i],edId[i],0);
 			}
+			G.log(changeNum,changeNum,G.totalTime);
 			break;
 		case 7:
 			G.centerMultInsert(stId,edId);
+			break;
+		case 8:
+			for(int i=0;i<changeNum;i++){	
+				G.centerDelete(stId[i],edId[i],0);
+			}
+			G.log(changeNum,changeNum,G.totalTime);
+			break;
+		case 9:
+			//cout<<stId.size()<<" "<<edId.size()<<endl;
+			G.centerMultDelete(stId,edId);
 			break;
 		default:
 			if(graphType!=2)	
 				cout<<"Wrong modle!"<<endl;
 			break;
 		}
-		if(computeType!=0 &&graphType!=2 &&computeType !=6 &&computeType!=7) G.outputDynamicInfo(computeType);
+		if(computeType!=0 &&graphType!=2 &&computeType !=6 &&computeType!=7 &&computeType!=8 &&computeType!=9) G.outputDynamicInfo(computeType);
 
 	}
     
